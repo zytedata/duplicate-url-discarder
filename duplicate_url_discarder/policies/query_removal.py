@@ -13,4 +13,6 @@ class QueryRemovalPolicy(PolicyBase):
 
     def _process(self, input_url: str) -> str:
         args_to_remove = self.args
-        return url_query_cleaner(input_url, args_to_remove, remove=True)
+        return url_query_cleaner(
+            input_url, args_to_remove, remove=True, unique=False, keep_fragments=True
+        )

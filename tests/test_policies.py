@@ -56,6 +56,16 @@ def test_url_pattern(url, expected):
         (["a"], "http://foo.example?foo=1&bar", "http://foo.example?foo=1&bar"),
         (["foo"], "http://foo.example?foo=1&bar", "http://foo.example?bar"),
         (["bar"], "http://foo.example?foo=1&bar", "http://foo.example?foo=1"),
+        (
+            ["bar"],
+            "http://foo.example?foo=1&foo=2&bar&bar=1",
+            "http://foo.example?foo=1&foo=2",
+        ),
+        (
+            ["bar"],
+            "http://foo.example?foo=1&bar#bar=frag",
+            "http://foo.example?foo=1#bar=frag",
+        ),
         (["foo", "baz"], "http://foo.example?foo=1&bar", "http://foo.example?bar"),
         (["foo", "bar"], "http://foo.example?foo=1&bar", "http://foo.example"),
     ],
