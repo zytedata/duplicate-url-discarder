@@ -1,8 +1,14 @@
+from __future__ import annotations
+
 import json
 from dataclasses import dataclass
-from typing import Any, Dict, List
+from typing import TYPE_CHECKING, Any, Dict, List
 
 from url_matcher import Patterns
+
+if TYPE_CHECKING:
+    # typing.Self requires Python 3.11
+    from typing_extensions import Self
 
 
 @dataclass
@@ -12,45 +18,43 @@ class UrlRule:
     policy: str
     args: Any
 
+    @classmethod
+    def from_dict(cls, policy_dict: Dict[str, Any]) -> Self:
+        """Load a rule from a dict"""
+        return cls(
+            order=policy_dict["order"],
+            url_pattern=Patterns(**policy_dict["urlPattern"]),
+            policy=policy_dict["policy"],
+            args=policy_dict.get("args"),
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Save a rule to a dict"""
+        pattern = {"include": list(self.url_pattern.include)}
+        if self.url_pattern.exclude:
+            pattern["exclude"] = list(self.url_pattern.exclude)
+        return {
+            "order": self.order,
+            "urlPattern": pattern,
+            "policy": self.policy,
+            "args": self.args,
+        }
+
 
 def load_rules(data: str) -> List[UrlRule]:
-    """Load a list of policy rules from a JSON text."""
+    """Load a list of rules from a JSON text."""
     results: List[UrlRule] = []
     j = json.loads(data)
     for item in j:
-        results.append(_rule_from_dict(item))
+        results.append(UrlRule.from_dict(item))
     return results
 
 
 def save_rules(policies: List[UrlRule]) -> str:
-    """Save a list of policy rules to a JSON text."""
+    """Save a list of rules to a JSON text."""
     return json.dumps(
-        [_rule_to_dict(p) for p in policies],
+        [p.to_dict() for p in policies],
         ensure_ascii=False,
         sort_keys=True,
         indent=2,
-    )
-
-
-def _rule_to_dict(policy: UrlRule) -> Dict[str, Any]:
-    """Save a policy rule to a dict"""
-    pattern = {"include": list(policy.url_pattern.include)}
-    if policy.url_pattern.exclude:
-        pattern["exclude"] = list(policy.url_pattern.exclude)
-    return {
-        "order": policy.order,
-        "urlPattern": pattern,
-        "policy": policy.policy,
-        "args": policy.args,
-    }
-
-
-def _rule_from_dict(policy_dict: Dict[str, Any]) -> UrlRule:
-    """Load a policy rule from a dict"""
-
-    return UrlRule(
-        order=policy_dict["order"],
-        url_pattern=Patterns(**policy_dict["urlPattern"]),
-        policy=policy_dict["policy"],
-        args=policy_dict.get("args"),
     )
