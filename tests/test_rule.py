@@ -1,6 +1,6 @@
 from url_matcher import Patterns
 
-from duplicate_url_discarder import PolicyRule, load_rules, save_rules
+from duplicate_url_discarder import UrlRule, load_rules, save_rules
 
 saved_rules = """[
   {
@@ -35,8 +35,8 @@ saved_rules = """[
 def test_load_rules():
     rules = load_rules(saved_rules)
     assert rules == [
-        PolicyRule(100, Patterns(["amazon.com"]), "queryRemoval", ["bbn", "node"]),
-        PolicyRule(
+        UrlRule(100, Patterns(["amazon.com"]), "queryRemoval", ["bbn", "node"]),
+        UrlRule(
             200, Patterns(["amazon.com"], ["amazon.com/live"]), "pathRemoval", None
         ),
     ]
@@ -44,8 +44,8 @@ def test_load_rules():
 
 def test_save_rules():
     rules = [
-        PolicyRule(100, Patterns(["amazon.com"]), "queryRemoval", ["bbn", "node"]),
-        PolicyRule(
+        UrlRule(100, Patterns(["amazon.com"]), "queryRemoval", ["bbn", "node"]),
+        UrlRule(
             200, Patterns(["amazon.com"], ["amazon.com/live"]), "pathRemoval", None
         ),
     ]

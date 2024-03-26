@@ -1,7 +1,7 @@
 import pytest
 from url_matcher import Patterns
 
-from duplicate_url_discarder import PolicyRule
+from duplicate_url_discarder import UrlRule
 from duplicate_url_discarder.policies import PolicyBase, QueryRemovalPolicy, get_policy
 
 
@@ -14,19 +14,19 @@ def test_get_policy():
     pattern = Patterns(["foo"], ["bar", "baz"])
     args = ["foo", "bar"]
 
-    rule = PolicyRule(0, pattern, "queryRemoval", args)
+    rule = UrlRule(0, pattern, "queryRemoval", args)
     policy = get_policy(rule)
     assert type(policy) is QueryRemovalPolicy
     assert policy.args == args
     assert policy.url_matcher.get(0) == pattern
 
-    rule = PolicyRule(0, pattern, "tests.test_policies.HardcodedPolicy", args)
+    rule = UrlRule(0, pattern, "tests.test_policies.HardcodedPolicy", args)
     policy = get_policy(rule)
     assert type(policy) is HardcodedPolicy
     assert policy.args == args
     assert policy.url_matcher.get(0) == pattern
 
-    rule = PolicyRule(0, pattern, "unknown", args)
+    rule = UrlRule(0, pattern, "unknown", args)
     with pytest.raises(ValueError, match="No policy named unknown"):
         get_policy(rule)
 

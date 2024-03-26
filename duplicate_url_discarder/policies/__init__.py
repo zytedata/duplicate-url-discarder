@@ -2,7 +2,7 @@ from typing import Dict, Type
 
 from scrapy.utils.misc import load_object
 
-from duplicate_url_discarder._rule import PolicyRule
+from duplicate_url_discarder._rule import UrlRule
 
 from .base import PolicyBase
 from .query_removal import QueryRemovalPolicy
@@ -12,7 +12,7 @@ _POLICY_CLASSES: Dict[str, Type[PolicyBase]] = {
 }
 
 
-def get_policy(rule: PolicyRule) -> PolicyBase:
+def get_policy(rule: UrlRule) -> PolicyBase:
     policy_cls: Type[PolicyBase]
     if "." not in rule.policy:
         if rule.policy not in _POLICY_CLASSES:
