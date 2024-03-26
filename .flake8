@@ -6,6 +6,8 @@ ignore =
     E501,
     # multiple statements on one line
     E704,
+    # line break before binary operator
+    W503,
 
     # Missing docstring in public module
     D100,
