@@ -14,7 +14,7 @@ class PolicyBase(ABC):
         """Return the input URL, modified according to the rules if applicable."""
         if not self.is_applicable(input_url):
             return input_url
-        return self._process(input_url)
+        return self.modify_url(input_url)
 
     def validate_args(self) -> None:  # noqa: B027
         """Check that the policy arguments are valid, raise an exception if not."""
@@ -25,5 +25,5 @@ class PolicyBase(ABC):
         return self.url_matcher.match(input_url) is not None
 
     @abstractmethod
-    def _process(self, input_url: str) -> str:
+    def modify_url(self, input_url: str) -> str:
         """Return the input URL, modified according to the rules."""

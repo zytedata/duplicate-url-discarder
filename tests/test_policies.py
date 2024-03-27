@@ -6,7 +6,7 @@ from duplicate_url_discarder.policies import PolicyBase, QueryRemovalPolicy, get
 
 
 class HardcodedPolicy(PolicyBase):
-    def _process(self, url: str) -> str:
+    def modify_url(self, url: str) -> str:
         return "http://hardcoded.example"
 
 
