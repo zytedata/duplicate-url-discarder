@@ -37,3 +37,36 @@ Installation
     pip install duplicate-url-discarder
 
 Requires **Python 3.8+**.
+
+Using
+=====
+
+Enable the Scrapy component:
+
+.. code-block:: python
+
+    ...
+
+It will replace the request URLs with their canonical forms, using configured
+policies.
+
+Policies
+========
+
+``duplicate-url-discarder`` utilizes *policies* to make canonical versions of
+URLs. The policies are configured with *URL rules*. Each URL rule specifies
+an URL pattern that a policy applies to and specific policy arguments to use.
+
+The following policies are currently available:
+
+* ``queryRemoval``: removes query string parameters, their names are specified
+  in the arguments.
+
+Configuration
+=============
+
+``duplicate-url-discarder`` uses the following Scrapy settings:
+
+``DUD_LOAD_POLICY_PATH``: it should be a list of file paths (``str`` or
+``pathlib.Path``) pointing to files with the URL rules to apply. The default
+value of this setting points to the default rules file.
