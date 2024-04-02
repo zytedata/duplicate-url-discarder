@@ -3,6 +3,8 @@ import os
 from pathlib import Path
 from typing import Iterable, List, Union
 
+from url_matcher import URLMatcher
+
 from duplicate_url_discarder._rule import UrlRule, load_rules
 from duplicate_url_discarder.policies import PolicyBase, get_policy
 
@@ -14,9 +16,18 @@ class Processor:
             data = Path(policy_path).read_text()
             rules.extend(load_rules(data))
         rules.sort(key=operator.attrgetter("order"))
-        self.policies: List[PolicyBase] = [get_policy(rule) for rule in rules]
+        self.url_matcher = URLMatcher()
+        self.policies: List[PolicyBase] = []
+        policy_id = 0
+        for rule in rules:
+            policy = get_policy(rule)
+            self.policies.append(policy)
+            self.url_matcher.add_or_update(policy_id, rule.url_pattern)
+            policy_id += 1
 
     def process_url(self, url: str) -> str:
-        for policy in self.policies:
+        policy_ids = self.url_matcher.match_all(url)
+        for policy_id in policy_ids:
+            policy = self.policies[policy_id]
             url = policy.process(url)
         return url

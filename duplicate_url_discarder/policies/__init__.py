@@ -20,4 +20,4 @@ def get_policy(rule: UrlRule) -> PolicyBase:
         policy_cls = _POLICY_CLASSES[rule.policy]
     else:
         policy_cls = load_object(rule.policy)
-    return policy_cls(rule.url_pattern, rule.args)
+    return policy_cls(rule.args)
