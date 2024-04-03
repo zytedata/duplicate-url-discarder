@@ -25,7 +25,7 @@ classifiers = [
 requires-python = ">=3.8"
 dependencies = [
     "Scrapy >= 2.0.1",
-    "url-matcher @ git+https://github.com/zytedata/url-matcher.git@main",
+    "url-matcher >= 0.4.0",
     "w3lib >= 1.22.0",
 ]
 dynamic = ["version"]
