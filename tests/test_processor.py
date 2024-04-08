@@ -22,7 +22,7 @@ def test_processor_load(tmp_path):
                     "args": ["bbn", "node"],
                     "order": 100,
                     "policy": "queryRemoval",
-                    "urlPattern": {"include": ["amazon.com"]},
+                    "urlPattern": {"include": ["bar.example"]},
                 },
                 {
                     "args": ["PHPSESSIONID"],
@@ -63,3 +63,39 @@ def test_processor_unknown_policy(tmp_path):
     )
     with pytest.raises(ValueError, match="No policy named unknown"):
         Processor([rules_path])
+
+
+@pytest.mark.parametrize(
+    ["order1", "order2"],
+    [
+        (1, 1),
+        (1, 2),
+        (2, 1),
+    ],
+)
+def test_processor_multiple_different_policies(tmp_path, order1, order2):
+    rules_path = Path(tmp_path) / "rules.json"
+    rules_path.write_text(
+        json.dumps(
+            [
+                {
+                    "args": ["bbn", "ref"],
+                    "order": order1,
+                    "policy": "queryRemoval",
+                    "urlPattern": {"include": []},
+                },
+                {
+                    "args": ["ref", "utm_source"],
+                    "order": order2,
+                    "policy": "queryRemoval",
+                    "urlPattern": {"include": []},
+                },
+            ]
+        )
+    )
+    processor = Processor([rules_path])
+    assert len(processor.policies) == 2
+    assert (
+        processor.process_url("https://example.com?utm_source=cat&bbn=1&ref=g")
+        == "https://example.com"
+    )

@@ -12,7 +12,7 @@ saved_rules = """[
     "policy": "queryRemoval",
     "urlPattern": {
       "include": [
-        "amazon.com"
+        "foo.example"
       ]
     }
   },
@@ -22,10 +22,10 @@ saved_rules = """[
     "policy": "pathRemoval",
     "urlPattern": {
       "exclude": [
-        "amazon.com/live"
+        "foo.example/live"
       ],
       "include": [
-        "amazon.com"
+        "foo.example"
       ]
     }
   }
@@ -35,18 +35,18 @@ saved_rules = """[
 def test_load_rules():
     rules = load_rules(saved_rules)
     assert rules == [
-        UrlRule(100, Patterns(["amazon.com"]), "queryRemoval", ["bbn", "node"]),
+        UrlRule(100, Patterns(["foo.example"]), "queryRemoval", ["bbn", "node"]),
         UrlRule(
-            200, Patterns(["amazon.com"], ["amazon.com/live"]), "pathRemoval", None
+            200, Patterns(["foo.example"], ["foo.example/live"]), "pathRemoval", None
         ),
     ]
 
 
 def test_save_rules():
     rules = [
-        UrlRule(100, Patterns(["amazon.com"]), "queryRemoval", ["bbn", "node"]),
+        UrlRule(100, Patterns(["foo.example"]), "queryRemoval", ["bbn", "node"]),
         UrlRule(
-            200, Patterns(["amazon.com"], ["amazon.com/live"]), "pathRemoval", None
+            200, Patterns(["foo.example"], ["foo.example/live"]), "pathRemoval", None
         ),
     ]
     assert save_rules(rules) == saved_rules

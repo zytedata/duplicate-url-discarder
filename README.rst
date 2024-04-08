@@ -47,8 +47,8 @@ Enable the Scrapy component:
 
     ...
 
-It will replace the request URLs with their canonical forms, using configured
-policies.
+It will process request URLs, making canonical forms of them and discarding
+URLs with the same canonical form as earlier ones.
 
 Policies
 ========
@@ -59,8 +59,9 @@ an URL pattern that a policy applies to and specific policy arguments to use.
 
 The following policies are currently available:
 
-* ``queryRemoval``: removes query string parameters, their names are specified
-  in the arguments.
+* ``queryRemoval``: removes query string parameters *(i.e. key=value)*, wherein
+  the keys are specified in the arguments. If a given key appears multiple times
+  with different values in the URL, all of them are removed.
 
 Configuration
 =============

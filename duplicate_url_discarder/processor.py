@@ -26,8 +26,7 @@ class Processor:
             policy_id += 1
 
     def process_url(self, url: str) -> str:
-        policy_ids = self.url_matcher.match_all(url)
-        for policy_id in policy_ids:
+        for policy_id in self.url_matcher.match_all(url):
             policy = self.policies[policy_id]
             url = policy.process(url)
         return url

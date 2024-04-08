@@ -58,7 +58,7 @@ def test_query_removal(args, url, expected):
 def test_query_removal_validate_args():
     with pytest.raises(TypeError, match="strings, not <class 'bytes'>: b''"):
         QueryRemovalPolicy([b""])
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="strings, not <class 'NoneType'>: None"):
         QueryRemovalPolicy(["a", None, ""])
     QueryRemovalPolicy([""])
     QueryRemovalPolicy([])
