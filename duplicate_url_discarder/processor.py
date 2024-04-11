@@ -26,7 +26,13 @@ class Processor:
             policy_id += 1
 
     def process_url(self, url: str) -> str:
-        for policy_id in self.url_matcher.match_all(url):
+        use_universal = True
+        for policy_id in self.url_matcher.match_all(url, include_universal=False):
+            use_universal = False
             policy = self.policies[policy_id]
             url = policy.process(url)
+        if use_universal:
+            for policy_id in self.url_matcher.match_universal():
+                policy = self.policies[policy_id]
+                url = policy.process(url)
         return url
