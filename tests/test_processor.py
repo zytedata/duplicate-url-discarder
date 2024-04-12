@@ -1,4 +1,5 @@
 import json
+import logging
 from pathlib import Path
 
 import pytest
@@ -73,7 +74,7 @@ def test_processor_unknown_policy(tmp_path):
         (2, 1),
     ],
 )
-def test_processor_multiple_different_policies(tmp_path, order1, order2):
+def test_processor_multiple_rules_same_policy(tmp_path, order1, order2):
     rules_path = Path(tmp_path) / "rules.json"
     rules_path.write_text(
         json.dumps(
@@ -99,3 +100,41 @@ def test_processor_multiple_different_policies(tmp_path, order1, order2):
         processor.process_url("https://example.com?utm_source=cat&bbn=1&ref=g")
         == "https://example.com"
     )
+
+
+def test_processor_duplicate_rules(tmp_path, caplog):
+    rules_path = Path(tmp_path) / "rules.json"
+    rules_path.write_text(
+        json.dumps(
+            [
+                {
+                    "args": ["bbn", "ref"],
+                    "order": 1,
+                    "policy": "queryRemoval",
+                    "urlPattern": {"include": []},
+                },
+                {
+                    "args": ["ref", "utm_source"],
+                    "order": 2,
+                    "policy": "queryRemoval",
+                    "urlPattern": {"include": []},
+                },
+                {
+                    "args": ["ref", "utm_source"],
+                    "order": 3,
+                    "policy": "queryRemoval",
+                    "urlPattern": {"include": []},
+                },
+                {
+                    "args": ["bbn", "ref"],
+                    "order": 1,
+                    "policy": "queryRemoval",
+                    "urlPattern": {"include": []},
+                },
+            ]
+        )
+    )
+    with caplog.at_level(logging.INFO):
+        processor = Processor([rules_path])
+    assert len(processor.policies) == 3
+    assert "Loaded 3 rules, skipped 1 duplicates." in caplog.text

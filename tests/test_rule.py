@@ -17,7 +17,6 @@ saved_rules = """[
     }
   },
   {
-    "args": null,
     "order": 200,
     "policy": "pathRemoval",
     "urlPattern": {
@@ -28,6 +27,13 @@ saved_rules = """[
         "foo.example"
       ]
     }
+  },
+  {
+    "order": 0,
+    "policy": "tolower",
+    "urlPattern": {
+      "include": []
+    }
   }
 ]"""
 
@@ -35,18 +41,36 @@ saved_rules = """[
 def test_load_rules():
     rules = load_rules(saved_rules)
     assert rules == [
-        UrlRule(100, Patterns(["foo.example"]), "queryRemoval", ["bbn", "node"]),
+        UrlRule(100, Patterns(["foo.example"]), "queryRemoval", ("bbn", "node")),
         UrlRule(
-            200, Patterns(["foo.example"], ["foo.example/live"]), "pathRemoval", None
+            200, Patterns(["foo.example"], ["foo.example/live"]), "pathRemoval", ()
         ),
+        UrlRule(0, Patterns([]), "tolower", ()),
     ]
 
 
 def test_save_rules():
     rules = [
-        UrlRule(100, Patterns(["foo.example"]), "queryRemoval", ["bbn", "node"]),
+        UrlRule(100, Patterns(["foo.example"]), "queryRemoval", ("bbn", "node")),
         UrlRule(
-            200, Patterns(["foo.example"], ["foo.example/live"]), "pathRemoval", None
+            200, Patterns(["foo.example"], ["foo.example/live"]), "pathRemoval", ()
         ),
+        UrlRule(0, Patterns([]), "tolower", ()),
     ]
     assert save_rules(rules) == saved_rules
+
+
+def test_load_rules_null_args():
+    saved_rules = """[
+  {
+    "order": 0,
+    "args": null,
+    "policy": "tolower",
+    "urlPattern": {
+      "include": []
+    }
+  }
+]"""
+    assert load_rules(saved_rules) == [
+        UrlRule(0, Patterns([]), "tolower", ()),
+    ]

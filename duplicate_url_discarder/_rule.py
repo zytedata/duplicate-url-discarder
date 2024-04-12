@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Dict, List
+from typing import TYPE_CHECKING, Any, Dict, List, Tuple
 
 from url_matcher import Patterns
 
@@ -11,12 +11,12 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 
-@dataclass
+@dataclass(frozen=True)
 class UrlRule:
     order: int
     url_pattern: Patterns
     policy: str
-    args: Any
+    args: Tuple[Any, ...]
 
     @classmethod
     def from_dict(cls, policy_dict: Dict[str, Any]) -> Self:
@@ -25,7 +25,7 @@ class UrlRule:
             order=policy_dict["order"],
             url_pattern=Patterns(**policy_dict["urlPattern"]),
             policy=policy_dict["policy"],
-            args=policy_dict.get("args"),
+            args=tuple(policy_dict.get("args") or ()),
         )
 
     def to_dict(self) -> Dict[str, Any]:
@@ -33,12 +33,14 @@ class UrlRule:
         pattern = {"include": list(self.url_pattern.include)}
         if self.url_pattern.exclude:
             pattern["exclude"] = list(self.url_pattern.exclude)
-        return {
+        result = {
             "order": self.order,
             "urlPattern": pattern,
             "policy": self.policy,
-            "args": self.args,
         }
+        if self.args:
+            result["args"] = list(self.args)
+        return result
 
 
 def load_rules(data: str) -> List[UrlRule]:
