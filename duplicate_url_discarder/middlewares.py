@@ -13,10 +13,10 @@ class DuplicateUrlDiscarderDownloaderMiddleware:
     def __init__(self, crawler: Crawler):
         self.crawler: Crawler = crawler
         policy_path: List[Union[str, os.PathLike]] = self.crawler.settings.getlist(
-            "DUD_LOAD_POLICY_PATH"
+            "DUD_LOAD_RULE_PATHS"
         )
         if not policy_path:
-            raise NotConfigured("No DUD_LOAD_POLICY_PATH set")
+            raise NotConfigured("No DUD_LOAD_RULE_PATHS set")
         self.processor = Processor(policy_path)
         self.canonical_urls: Set[str] = set()
 

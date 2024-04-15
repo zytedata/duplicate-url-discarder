@@ -68,6 +68,6 @@ Configuration
 
 ``duplicate-url-discarder`` uses the following Scrapy settings:
 
-``DUD_LOAD_POLICY_PATH``: it should be a list of file paths (``str`` or
+``DUD_LOAD_RULE_PATHS``: it should be a list of file paths (``str`` or
 ``pathlib.Path``) pointing to files with the URL rules to apply. The default
 value of this setting points to the default rules file.
