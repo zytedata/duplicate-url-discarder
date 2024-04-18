@@ -4,15 +4,15 @@ from pathlib import Path
 
 import pytest
 
-from duplicate_url_discarder import Processor
+from duplicate_url_discarder import UrlCanonicalizer
 
 
-def test_processor_empty():
-    processor = Processor([])
-    assert processor.process_url("http://foo.example") == "http://foo.example"
+def test_url_canonicalizer_empty():
+    url_canonicalizer = UrlCanonicalizer([])
+    assert url_canonicalizer.process_url("http://foo.example") == "http://foo.example"
 
 
-def test_processor_load(tmp_path):
+def test_url_canonicalizer_load(tmp_path):
     empty_path = Path(tmp_path) / "empty.json"
     empty_path.write_text("[]")
     rules_path = Path(tmp_path) / "rules.json"
@@ -34,15 +34,15 @@ def test_processor_load(tmp_path):
             ]
         )
     )
-    processor = Processor([str(empty_path), rules_path])
-    assert len(processor.policies) == 2
+    url_canonicalizer = UrlCanonicalizer([str(empty_path), rules_path])
+    assert len(url_canonicalizer.policies) == 2
     assert (
-        processor.process_url("http://foo.example/?foo=1&bbn=1&PHPSESSIONID=1")
+        url_canonicalizer.process_url("http://foo.example/?foo=1&bbn=1&PHPSESSIONID=1")
         == "http://foo.example/?foo=1&bbn=1"
     )
 
 
-def test_processor_unknown_policy(tmp_path):
+def test_url_canonicalizer_unknown_policy(tmp_path):
     rules_path = Path(tmp_path) / "rules.json"
     rules_path.write_text(
         json.dumps(
@@ -63,7 +63,7 @@ def test_processor_unknown_policy(tmp_path):
         )
     )
     with pytest.raises(ValueError, match="No policy named unknown"):
-        Processor([rules_path])
+        UrlCanonicalizer([rules_path])
 
 
 @pytest.mark.parametrize(
@@ -74,7 +74,7 @@ def test_processor_unknown_policy(tmp_path):
         (2, 1),
     ],
 )
-def test_processor_multiple_rules_same_policy(tmp_path, order1, order2):
+def test_url_canonicalizer_multiple_rules_same_policy(tmp_path, order1, order2):
     rules_path = Path(tmp_path) / "rules.json"
     rules_path.write_text(
         json.dumps(
@@ -94,15 +94,15 @@ def test_processor_multiple_rules_same_policy(tmp_path, order1, order2):
             ]
         )
     )
-    processor = Processor([rules_path])
-    assert len(processor.policies) == 2
+    url_canonicalizer = UrlCanonicalizer([rules_path])
+    assert len(url_canonicalizer.policies) == 2
     assert (
-        processor.process_url("https://example.com?utm_source=cat&bbn=1&ref=g")
+        url_canonicalizer.process_url("https://example.com?utm_source=cat&bbn=1&ref=g")
         == "https://example.com"
     )
 
 
-def test_processor_duplicate_rules(tmp_path, caplog):
+def test_url_canonicalizer_duplicate_rules(tmp_path, caplog):
     rules_path = Path(tmp_path) / "rules.json"
     rules_path.write_text(
         json.dumps(
@@ -135,6 +135,6 @@ def test_processor_duplicate_rules(tmp_path, caplog):
         )
     )
     with caplog.at_level(logging.INFO):
-        processor = Processor([rules_path])
-    assert len(processor.policies) == 3
+        url_canonicalizer = UrlCanonicalizer([rules_path])
+    assert len(url_canonicalizer.policies) == 3
     assert "Loaded 3 rules, skipped 1 duplicates." in caplog.text

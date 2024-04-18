@@ -2,8 +2,7 @@ from typing import Dict, Type
 
 from scrapy.utils.misc import load_object
 
-from duplicate_url_discarder._rule import UrlRule
-
+from .._rule import UrlRule
 from .base import PolicyBase
 from .query_removal import QueryRemovalPolicy
 

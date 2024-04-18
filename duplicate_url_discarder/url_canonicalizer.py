@@ -6,13 +6,13 @@ from typing import Iterable, List, Set, Union
 
 from url_matcher import URLMatcher
 
-from duplicate_url_discarder._rule import UrlRule, load_rules
-from duplicate_url_discarder.policies import PolicyBase, get_policy
+from ._rule import UrlRule, load_rules
+from .policies import PolicyBase, get_policy
 
 logger = logging.getLogger(__name__)
 
 
-class Processor:
+class UrlCanonicalizer:
     def __init__(self, policy_paths: Iterable[Union[str, os.PathLike]]) -> None:
         rules: Set[UrlRule] = set()
         full_rule_count = 0
