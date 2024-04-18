@@ -1,9 +1,9 @@
 from w3lib.url import url_query_cleaner
 
-from .base import PolicyBase
+from .base import UrlProcessorBase
 
 
-class QueryRemovalPolicy(PolicyBase):
+class QueryRemovalProcessor(UrlProcessorBase):
     def validate_args(self) -> None:
         for arg in self.args:
             if not isinstance(arg, str):

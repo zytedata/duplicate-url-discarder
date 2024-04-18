@@ -23,8 +23,8 @@ duplicate-url-discarder
    :alt: Documentation Status
 
 ``duplicate-url-discarder`` contains Scrapy components that allow discarding
-requests with duplicate URLs, using customizable policies to configure which
-URLs are considered duplicate.
+requests with duplicate URLs, using customizable URL processors to configure
+which URLs are considered duplicate.
 
 Quick Start
 ***********
@@ -50,14 +50,15 @@ Enable the Scrapy component:
 It will process request URLs, making canonical forms of them and discarding
 URLs with the same canonical form as earlier ones.
 
-Policies
-========
+URL Processors
+==============
 
-``duplicate-url-discarder`` utilizes *policies* to make canonical versions of
-URLs. The policies are configured with *URL rules*. Each URL rule specifies
-an URL pattern that a policy applies to and specific policy arguments to use.
+``duplicate-url-discarder`` utilizes *URL processors* to make canonica
+versions of URLs. The processors are configured with *URL rules*. Each URL rule
+specifies an URL pattern that a processor applies to and specific processor
+arguments to use.
 
-The following policies are currently available:
+The following URL processors are currently available:
 
 * ``queryRemoval``: removes query string parameters *(i.e. key=value)*, wherein
   the keys are specified in the arguments. If a given key appears multiple times

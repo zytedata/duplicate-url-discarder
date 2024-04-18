@@ -7,17 +7,17 @@ from typing import Iterable, List, Set, Union
 from url_matcher import URLMatcher
 
 from ._rule import UrlRule, load_rules
-from .policies import PolicyBase, get_policy
+from .processors import UrlProcessorBase, get_processor
 
 logger = logging.getLogger(__name__)
 
 
 class UrlCanonicalizer:
-    def __init__(self, policy_paths: Iterable[Union[str, os.PathLike]]) -> None:
+    def __init__(self, rule_paths: Iterable[Union[str, os.PathLike]]) -> None:
         rules: Set[UrlRule] = set()
         full_rule_count = 0
-        for policy_path in policy_paths:
-            data = Path(policy_path).read_text()
+        for rule_path in rule_paths:
+            data = Path(rule_path).read_text()
             loaded_rules = load_rules(data)
             full_rule_count += len(loaded_rules)
             rules.update(loaded_rules)
@@ -27,22 +27,22 @@ class UrlCanonicalizer:
         )
 
         self.url_matcher = URLMatcher()
-        self.policies: List[PolicyBase] = []
-        policy_id = 0
+        self.processors: List[UrlProcessorBase] = []
+        rule_id = 0
         for rule in sorted(rules, key=operator.attrgetter("order")):
-            policy = get_policy(rule)
-            self.policies.append(policy)
-            self.url_matcher.add_or_update(policy_id, rule.url_pattern)
-            policy_id += 1
+            processor = get_processor(rule)
+            self.processors.append(processor)
+            self.url_matcher.add_or_update(rule_id, rule.url_pattern)
+            rule_id += 1
 
     def process_url(self, url: str) -> str:
         use_universal = True
-        for policy_id in self.url_matcher.match_all(url, include_universal=False):
+        for rule_id in self.url_matcher.match_all(url, include_universal=False):
             use_universal = False
-            policy = self.policies[policy_id]
-            url = policy.process(url)
+            processor = self.processors[rule_id]
+            url = processor.process(url)
         if use_universal:
-            for policy_id in self.url_matcher.match_universal():
-                policy = self.policies[policy_id]
-                url = policy.process(url)
+            for rule_id in self.url_matcher.match_universal():
+                processor = self.processors[rule_id]
+                url = processor.process(url)
         return url

@@ -12,12 +12,12 @@ from .url_canonicalizer import UrlCanonicalizer
 class DuplicateUrlDiscarderDownloaderMiddleware:
     def __init__(self, crawler: Crawler):
         self.crawler: Crawler = crawler
-        policy_path: List[Union[str, os.PathLike]] = self.crawler.settings.getlist(
+        rule_paths: List[Union[str, os.PathLike]] = self.crawler.settings.getlist(
             "DUD_LOAD_RULE_PATHS"
         )
-        if not policy_path:
+        if not rule_paths:
             raise NotConfigured("No DUD_LOAD_RULE_PATHS set")
-        self.url_canonicalizer = UrlCanonicalizer(policy_path)
+        self.url_canonicalizer = UrlCanonicalizer(rule_paths)
         self.canonical_urls: Set[str] = set()
 
     def process_request(self, request: Request) -> Union[Request, Response, None]:

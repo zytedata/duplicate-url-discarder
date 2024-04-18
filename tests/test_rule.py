@@ -9,7 +9,7 @@ saved_rules = """[
       "node"
     ],
     "order": 100,
-    "policy": "queryRemoval",
+    "processor": "queryRemoval",
     "urlPattern": {
       "include": [
         "foo.example"
@@ -18,7 +18,7 @@ saved_rules = """[
   },
   {
     "order": 200,
-    "policy": "pathRemoval",
+    "processor": "pathRemoval",
     "urlPattern": {
       "exclude": [
         "foo.example/live"
@@ -30,7 +30,7 @@ saved_rules = """[
   },
   {
     "order": 0,
-    "policy": "tolower",
+    "processor": "tolower",
     "urlPattern": {
       "include": []
     }
@@ -65,7 +65,7 @@ def test_load_rules_null_args():
   {
     "order": 0,
     "args": null,
-    "policy": "tolower",
+    "processor": "tolower",
     "urlPattern": {
       "include": []
     }

@@ -15,17 +15,17 @@ if TYPE_CHECKING:
 class UrlRule:
     order: int
     url_pattern: Patterns
-    policy: str
+    processor: str
     args: Tuple[Any, ...]
 
     @classmethod
-    def from_dict(cls, policy_dict: Dict[str, Any]) -> Self:
+    def from_dict(cls, rule_dict: Dict[str, Any]) -> Self:
         """Load a rule from a dict"""
         return cls(
-            order=policy_dict["order"],
-            url_pattern=Patterns(**policy_dict["urlPattern"]),
-            policy=policy_dict["policy"],
-            args=tuple(policy_dict.get("args") or ()),
+            order=rule_dict["order"],
+            url_pattern=Patterns(**rule_dict["urlPattern"]),
+            processor=rule_dict["processor"],
+            args=tuple(rule_dict.get("args") or ()),
         )
 
     def to_dict(self) -> Dict[str, Any]:
@@ -36,7 +36,7 @@ class UrlRule:
         result = {
             "order": self.order,
             "urlPattern": pattern,
-            "policy": self.policy,
+            "processor": self.processor,
         }
         if self.args:
             result["args"] = list(self.args)
@@ -52,10 +52,10 @@ def load_rules(data: str) -> List[UrlRule]:
     return results
 
 
-def save_rules(policies: List[UrlRule]) -> str:
+def save_rules(rules: List[UrlRule]) -> str:
     """Save a list of rules to a JSON text."""
     return json.dumps(
-        [p.to_dict() for p in policies],
+        [r.to_dict() for r in rules],
         ensure_ascii=False,
         sort_keys=True,
         indent=2,

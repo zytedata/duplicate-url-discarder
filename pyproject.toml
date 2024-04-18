@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "duplicate-url-discarder"
-description = "Discarding duplicate URLs based on policies."
+description = "Discarding duplicate URLs based on rules."
 authors = [{name = "Zyte Group Ltd", email = "info@zyte.com"}]
 readme = "README.rst"
 license = {file = "LICENSE"}
