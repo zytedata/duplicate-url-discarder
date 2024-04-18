@@ -22,9 +22,12 @@ class DuplicateUrlDiscarderDownloaderMiddleware:
 
     def process_request(self, request: Request) -> Union[Request, Response, None]:
         if not request.meta.get("dud", False):
+            self.crawler.stats.inc_value("duplicate_url_discarder/request/skipped")
             return None
         canonical_url = self.url_canonicalizer.process_url(request.url)
         if canonical_url in self.canonical_urls:
+            self.crawler.stats.inc_value("duplicate_url_discarder/request/discarded")
             raise IgnoreRequest(f"Duplicate URL discarded: {canonical_url}")
         self.canonical_urls.add(canonical_url)
+        self.crawler.stats.inc_value("duplicate_url_discarder/request/allowed")
         return None
