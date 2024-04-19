@@ -40,6 +40,10 @@ def test_url_canonicalizer_load(tmp_path):
         url_canonicalizer.process_url("http://foo.example/?foo=1&bbn=1&PHPSESSIONID=1")
         == "http://foo.example/?foo=1&bbn=1"
     )
+    assert (
+        url_canonicalizer.process_url("http://bar.example/?foo=1&bbn=1&PHPSESSIONID=1")
+        == "http://bar.example/?foo=1&PHPSESSIONID=1"
+    )
 
 
 def test_url_canonicalizer_unknown_processor(tmp_path):
