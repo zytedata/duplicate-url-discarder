@@ -53,7 +53,7 @@ URLs with the same canonical form as earlier ones.
 URL Processors
 ==============
 
-``duplicate-url-discarder`` utilizes *URL processors* to make canonica
+``duplicate-url-discarder`` utilizes *URL processors* to make canonical
 versions of URLs. The processors are configured with *URL rules*. Each URL rule
 specifies an URL pattern that a processor applies to and specific processor
 arguments to use.
