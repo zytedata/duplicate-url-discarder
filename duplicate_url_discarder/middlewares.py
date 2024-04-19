@@ -1,3 +1,4 @@
+import hashlib
 import os
 from typing import List, Set, Union
 
@@ -18,16 +19,21 @@ class DuplicateUrlDiscarderDownloaderMiddleware:
         if not rule_paths:
             raise NotConfigured("No DUD_LOAD_RULE_PATHS set")
         self.url_canonicalizer = UrlCanonicalizer(rule_paths)
-        self.canonical_urls: Set[str] = set()
+        self._fingerprints: Set[str] = set()
+
+    @staticmethod
+    def _url_fingerprint(url: str) -> str:
+        return hashlib.sha1(url.encode()).hexdigest()
 
     def process_request(self, request: Request) -> Union[Request, Response, None]:
         if not request.meta.get("dud", False):
             self.crawler.stats.inc_value("duplicate_url_discarder/request/skipped")
             return None
         canonical_url = self.url_canonicalizer.process_url(request.url)
-        if canonical_url in self.canonical_urls:
+        fp = self._url_fingerprint(canonical_url)
+        if fp in self._fingerprints:
             self.crawler.stats.inc_value("duplicate_url_discarder/request/discarded")
             raise IgnoreRequest(f"Duplicate URL discarded: {canonical_url}")
-        self.canonical_urls.add(canonical_url)
+        self._fingerprints.add(fp)
         self.crawler.stats.inc_value("duplicate_url_discarder/request/allowed")
         return None
