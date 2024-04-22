@@ -22,7 +22,7 @@ duplicate-url-discarder
    :target: https://duplicate-url-discarder.readthedocs.io/en/stable/?badge=stable
    :alt: Documentation Status
 
-``duplicate-url-discarder`` contains Scrapy components that allow discarding
+``duplicate-url-discarder`` contains a Scrapy middleware that allows discarding
 requests with duplicate URLs, using customizable URL processors to configure
 which URLs are considered duplicate.
 
@@ -47,8 +47,9 @@ Enable the Scrapy component:
 
     ...
 
-It will process request URLs, making canonical forms of them and discarding
-URLs with the same canonical form as earlier ones.
+It will process requests, making canonical forms of their URLs and discarding
+requests with the same canonical URL form as earlier ones. Only requests with
+the ``"dud"`` meta value set to ``True`` are processed in this way.
 
 URL Processors
 ==============
