@@ -38,7 +38,7 @@ class DuplicateUrlDiscarderDownloaderMiddleware:
     def process_request(self, request: Request) -> Union[Request, Response, None]:
         if request.dont_filter:
             return None
-        if not request.meta.get("dud", False):
+        if not request.meta.get("dud", True):
             self.crawler.stats.inc_value("duplicate_url_discarder/request/skipped")
             return None
         canonical_url = self.url_canonicalizer.process_url(request.url)
