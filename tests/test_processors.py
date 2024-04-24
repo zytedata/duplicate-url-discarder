@@ -2,16 +2,7 @@ import pytest
 from url_matcher import Patterns
 
 from duplicate_url_discarder import UrlRule
-from duplicate_url_discarder.processors import (
-    QueryRemovalProcessor,
-    UrlProcessorBase,
-    get_processor,
-)
-
-
-class HardcodedProcessor(UrlProcessorBase):
-    def process(self, url: str) -> str:
-        return "http://hardcoded.example"
+from duplicate_url_discarder.processors import QueryRemovalProcessor, get_processor
 
 
 def test_get_processor():
@@ -21,11 +12,6 @@ def test_get_processor():
     rule = UrlRule(0, pattern, "queryRemoval", args)
     processor = get_processor(rule)
     assert type(processor) is QueryRemovalProcessor
-    assert processor.args == args
-
-    rule = UrlRule(0, pattern, "tests.test_processors.HardcodedProcessor", args)
-    processor = get_processor(rule)
-    assert type(processor) is HardcodedProcessor
     assert processor.args == args
 
     rule = UrlRule(0, pattern, "unknown", args)
