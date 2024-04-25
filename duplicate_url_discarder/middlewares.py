@@ -45,7 +45,9 @@ class DuplicateUrlDiscarderDownloaderMiddleware:
         fp = self._fingerprinter.fingerprint(request.replace(url=canonical_url))
         if fp in self._fingerprints:
             self.crawler.stats.inc_value("duplicate_url_discarder/request/discarded")
-            raise IgnoreRequest(f"Duplicate URL discarded: {canonical_url}")
+            raise IgnoreRequest(
+                f"Duplicate URL discarded: {request.url} (canonical URL: {canonical_url})"
+            )
         self._fingerprints.add(fp)
         self.crawler.stats.inc_value("duplicate_url_discarder/request/allowed")
         return None
