@@ -45,13 +45,14 @@ Enable the Scrapy middleware:
 
 .. code-block:: python
 
-    DOWNLOLADER_MIDDLEWARES = {
+    DOWNLOADER_MIDDLEWARES = {
         "duplicate_url_discarder.DuplicateUrlDiscarderDownloaderMiddleware": 540,
     }
 
 It will process requests, making canonical forms of their URLs and discarding
-requests with the same canonical URL form as earlier ones. Only requests with
-the ``"dud"`` meta value set to ``True`` are processed in this way.
+requests with the same canonical URL form as earlier ones. Requests with
+the ``"dud"`` meta value set to ``False`` or with the ``dont_filter`` attribute
+set to ``True`` are not processed in this way.
 
 URL Processors
 ==============
