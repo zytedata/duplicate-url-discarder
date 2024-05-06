@@ -22,9 +22,8 @@ duplicate-url-discarder
    :target: https://duplicate-url-discarder.readthedocs.io/en/stable/?badge=stable
    :alt: Documentation Status
 
-``duplicate-url-discarder`` contains a Scrapy middleware that allows discarding
-requests with duplicate URLs, using customizable URL processors to configure
-which URLs are considered duplicate.
+``duplicate-url-discarder`` contains a Scrapy fingerprinter that uses
+customizable URL processors to configure which URLs are considered duplicate.
 
 Quick Start
 ***********
@@ -41,18 +40,16 @@ Requires **Python 3.8+**.
 Using
 =====
 
-Enable the Scrapy middleware:
+Enable the Scrapy fingerprinter:
 
 .. code-block:: python
 
-    DOWNLOADER_MIDDLEWARES = {
-        "duplicate_url_discarder.DuplicateUrlDiscarderDownloaderMiddleware": 540,
-    }
+    REQUEST_FINGERPRINTER_CLASS = "duplicate_url_discarder.DuplicateUrlDiscarderFingerprinter"
 
-It will process requests, making canonical forms of their URLs and discarding
-requests with the same canonical URL form as earlier ones. Requests with
-the ``"dud"`` meta value set to ``False`` or with the ``dont_filter`` attribute
-set to ``True`` are not processed in this way.
+It will make fingerprints using canonical forms of the request URLs. Requests
+with the ``"dud"`` meta value set to ``False`` are processed using a fallback
+fingerprinter (which is the default Scrapy one unless another one is configured
+in the ``DUD_FALLBACK_REQUEST_FINGERPRINTER_CLASS`` setting).
 
 URL Processors
 ==============

@@ -66,10 +66,6 @@ def test_fingerprinter(tmp_path):
     # removing an argument (via a domain rule)
     assert df.request_seen(Request(url="http://bar.example/?bbn=11111&foo=baz"))
 
-    # skipping via dont_filter=True
-    assert not df.request_seen(
-        Request(url="http://bar.example/?bbn=11111&foo=baz", dont_filter=True)
-    )
     # skipping via dud=False, only if the exact URL wasn't seen before
     assert not df.request_seen(
         Request(url="http://bar.example/?bbn=11112&foo=baz", meta={"dud": False})

@@ -48,8 +48,6 @@ class DuplicateUrlDiscarderFingerprinter:
         return cls(crawler)
 
     def fingerprint(self, request: Request) -> bytes:
-        if request.dont_filter:
-            return self._fallback_request_fingerprinter.fingerprint(request)
         if not request.meta.get("dud", True):
             self.crawler.stats.inc_value("duplicate_url_discarder/request/skipped")
             return self._fallback_request_fingerprinter.fingerprint(request)
