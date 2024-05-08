@@ -1,8 +1,8 @@
 import pytest
 from url_matcher import Patterns
 
-from duplicate_url_discarder import UrlRule
 from duplicate_url_discarder.processors import QueryRemovalProcessor, get_processor
+from duplicate_url_discarder.rule import UrlRule
 
 
 def test_get_processor():

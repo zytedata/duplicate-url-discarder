@@ -1,6 +1,6 @@
 from url_matcher import Patterns
 
-from duplicate_url_discarder import UrlRule, load_rules, save_rules
+from duplicate_url_discarder.rule import UrlRule, load_rules, save_rules
 
 saved_rules = """[
   {

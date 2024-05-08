@@ -1,6 +1,6 @@
 from typing import Dict, Type
 
-from .._rule import UrlRule
+from ..rule import UrlRule
 from .base import UrlProcessorBase
 from .query_removal import QueryRemovalProcessor
 

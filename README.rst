@@ -23,7 +23,7 @@ duplicate-url-discarder
    :alt: Documentation Status
 
 ``duplicate-url-discarder`` contains a Scrapy fingerprinter that uses
-customizable URL processors to configure which URLs are considered duplicate.
+customizable URL processors to canonicalize URLs before fingerprinting.
 
 Quick Start
 ***********
@@ -56,8 +56,8 @@ URL Processors
 
 ``duplicate-url-discarder`` utilizes *URL processors* to make canonical
 versions of URLs. The processors are configured with *URL rules*. Each URL rule
-specifies an URL pattern that a processor applies to and specific processor
-arguments to use.
+specifies an URL pattern for which the processor applies, and specific
+processor arguments to use.
 
 The following URL processors are currently available:
 
@@ -65,11 +65,58 @@ The following URL processors are currently available:
   the keys are specified in the arguments. If a given key appears multiple times
   with different values in the URL, all of them are removed.
 
+URL Rules
+=========
+
+A URL rule is a dictionary specifying the ``url-matcher`` URL pattern(s), the
+URL processor name, the URL processor args and the order that is used to sort
+the rules. They are loaded from JSON files that contain arrays of serialized
+rules:
+
+.. code-block:: json
+
+    [
+      {
+        "args": [
+          "foo",
+          "bar",
+        ],
+        "order": 100,
+        "processor": "queryRemoval",
+        "urlPattern": {
+          "include": [
+            "foo.example"
+          ]
+        }
+      },
+      {
+        "args": [
+          "PHPSESSIONID"
+        ],
+        "order": 100,
+        "processor": "queryRemoval",
+        "urlPattern": {
+          "include": []
+        }
+      }
+    ]
+
+All non-universal rules (ones that have non-empty include pattern) that match
+a request URL are applied according to their order field. If there are no
+non-universal rules that match the URL, the universal ones are applied.
+
 Configuration
 =============
 
 ``duplicate-url-discarder`` uses the following Scrapy settings:
 
 ``DUD_LOAD_RULE_PATHS``: it should be a list of file paths (``str`` or
-``pathlib.Path``) pointing to files with the URL rules to apply. The default
-value of this setting points to the default rules file.
+``pathlib.Path``) pointing to JSON files with the URL rules to apply:
+
+.. code-block:: python
+
+    DUD_LOAD_RULE_PATHS = [
+        "/home/user/project/custom_rules1.json",
+    ]
+
+The default value of this setting is empty.

@@ -45,11 +45,7 @@ class UrlRule:
 
 def load_rules(data: str) -> List[UrlRule]:
     """Load a list of rules from a JSON text."""
-    results: List[UrlRule] = []
-    j = json.loads(data)
-    for item in j:
-        results.append(UrlRule.from_dict(item))
-    return results
+    return [UrlRule.from_dict(item) for item in json.loads(data)]
 
 
 def save_rules(rules: List[UrlRule]) -> str:

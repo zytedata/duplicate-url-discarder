@@ -2,12 +2,12 @@ import logging
 import operator
 import os
 from pathlib import Path
-from typing import Iterable, List, Set, Union
+from typing import Dict, Iterable, Set, Union
 
 from url_matcher import URLMatcher
 
-from ._rule import UrlRule, load_rules
 from .processors import UrlProcessorBase, get_processor
+from .rule import UrlRule, load_rules
 
 logger = logging.getLogger(__name__)
 
@@ -27,11 +27,11 @@ class UrlCanonicalizer:
         )
 
         self.url_matcher = URLMatcher()
-        self.processors: List[UrlProcessorBase] = []
+        self.processors: Dict[int, UrlProcessorBase] = {}
         rule_id = 0
         for rule in sorted(rules, key=operator.attrgetter("order")):
             processor = get_processor(rule)
-            self.processors.append(processor)
+            self.processors[rule_id] = processor
             self.url_matcher.add_or_update(rule_id, rule.url_pattern)
             rule_id += 1
 

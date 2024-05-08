@@ -13,8 +13,7 @@ def get_fingerprinter(
     settings_dict: Dict[str, Any]
 ) -> DuplicateUrlDiscarderFingerprinter:
     crawler = get_crawler(Spider, settings_dict)
-    fingerprinter = DuplicateUrlDiscarderFingerprinter.from_crawler(crawler)
-    return fingerprinter
+    return DuplicateUrlDiscarderFingerprinter.from_crawler(crawler)
 
 
 def get_df(fingerprinter: DuplicateUrlDiscarderFingerprinter) -> BaseDupeFilter:

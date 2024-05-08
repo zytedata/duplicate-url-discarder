@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from duplicate_url_discarder import UrlCanonicalizer
+from duplicate_url_discarder.url_canonicalizer import UrlCanonicalizer
 
 
 def test_url_canonicalizer_empty():
