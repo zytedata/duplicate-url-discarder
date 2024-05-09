@@ -21,14 +21,14 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class DuplicateUrlDiscarderFingerprinter:
+class Fingerprinter:
     def __init__(self, crawler: Crawler):
         self.crawler: Crawler = crawler
         rule_paths: List[Union[str, os.PathLike]] = self.crawler.settings.getlist(
             "DUD_LOAD_RULE_PATHS"
         )
         if not rule_paths:
-            logger.warning("No DUD_LOAD_RULE_PATHS set")
+            logger.warning("DUD_LOAD_RULE_PATHS is not set or is empty.")
         self._fallback_request_fingerprinter: RequestFingerprinterProtocol = (
             create_instance(
                 load_object(

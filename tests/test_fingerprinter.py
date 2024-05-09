@@ -6,17 +6,15 @@ from scrapy import Request, Spider
 from scrapy.dupefilters import BaseDupeFilter, RFPDupeFilter
 from scrapy.utils.test import get_crawler
 
-from duplicate_url_discarder import DuplicateUrlDiscarderFingerprinter
+from duplicate_url_discarder import Fingerprinter
 
 
-def get_fingerprinter(
-    settings_dict: Dict[str, Any]
-) -> DuplicateUrlDiscarderFingerprinter:
+def get_fingerprinter(settings_dict: Dict[str, Any]) -> Fingerprinter:
     crawler = get_crawler(Spider, settings_dict)
-    return DuplicateUrlDiscarderFingerprinter.from_crawler(crawler)
+    return Fingerprinter.from_crawler(crawler)
 
 
-def get_df(fingerprinter: DuplicateUrlDiscarderFingerprinter) -> BaseDupeFilter:
+def get_df(fingerprinter: Fingerprinter) -> BaseDupeFilter:
     return RFPDupeFilter.from_settings(
         fingerprinter.crawler.settings, fingerprinter=fingerprinter
     )

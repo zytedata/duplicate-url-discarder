@@ -44,7 +44,7 @@ Enable the Scrapy fingerprinter:
 
 .. code-block:: python
 
-    REQUEST_FINGERPRINTER_CLASS = "duplicate_url_discarder.DuplicateUrlDiscarderFingerprinter"
+    REQUEST_FINGERPRINTER_CLASS = "duplicate_url_discarder.Fingerprinter"
 
 It will make fingerprints using canonical forms of the request URLs. Requests
 with the ``"dud"`` meta value set to ``False`` are processed using a fallback
