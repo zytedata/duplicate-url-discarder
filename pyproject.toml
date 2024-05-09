@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "duplicate-url-discarder"
-description = "Discarding duplicate URLs based on policies."
+description = "Discarding duplicate URLs based on rules."
 authors = [{name = "Zyte Group Ltd", email = "info@zyte.com"}]
 readme = "README.rst"
 license = {file = "LICENSE"}
@@ -24,6 +24,9 @@ classifiers = [
 ]
 requires-python = ">=3.8"
 dependencies = [
+    "Scrapy >= 2.7.0",
+    "url-matcher >= 0.5.0",
+    "w3lib >= 1.22.0",
 ]
 dynamic = ["version"]
 
@@ -39,6 +42,13 @@ duplicate_url_discarder = ["py.typed"]
 [tool.isort]
 profile = "black"
 multi_line_output = 3
+
+[[tool.mypy.overrides]]
+module = [
+    "scrapy.*",
+    "url_matcher.*",
+]
+ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = [
