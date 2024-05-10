@@ -40,16 +40,39 @@ Requires **Python 3.8+**.
 Using
 =====
 
-Enable the Scrapy fingerprinter:
+If you use Scrapy >= 2.10 you can enable the fingerprinter by enabling the
+provided Scrapy add-on:
+
+.. code-block:: python
+
+    ADDONS = {
+        "duplicate_url_discarder.Addon": 600,
+    }
+
+If you are using other Scrapy add-ons that modify the request fingerprinter,
+such as the `scrapy-zyte-api`_ add-on, configure this add-on with a higher
+priority value so that the fallback fingerprinter is set to the correct value.
+
+With older Scrapy versions you need to enable the fingerprinter directly:
 
 .. code-block:: python
 
     REQUEST_FINGERPRINTER_CLASS = "duplicate_url_discarder.Fingerprinter"
 
-It will make fingerprints using canonical forms of the request URLs. Requests
-with the ``"dud"`` meta value set to ``False`` are processed using a fallback
+If you were using a non-default request fingerprinter already, be it one you
+implemented or one from a Scrapy plugin like `scrapy-zyte-api`_, set it as
+fallback:
+
+.. code-block:: python
+
+    DUD_FALLBACK_REQUEST_FINGERPRINTER_CLASS = "scrapy_zyte_api.ScrapyZyteAPIRequestFingerprinter"
+
+``duplicate_url_discarder.Fingerprinter`` will make canonical forms of the
+request URLs and get the fingerprints for those using the configured fallback
 fingerprinter (which is the default Scrapy one unless another one is configured
-in the ``DUD_FALLBACK_REQUEST_FINGERPRINTER_CLASS`` setting).
+in the ``DUD_FALLBACK_REQUEST_FINGERPRINTER_CLASS`` setting). Requests with the
+``"dud"`` meta value set to ``False`` are processed directly, without making a
+canonical form.
 
 URL Processors
 ==============
@@ -120,3 +143,5 @@ Configuration
     ]
 
 The default value of this setting is empty.
+
+.. _scrapy-zyte-api: https://github.com/scrapy-plugins/scrapy-zyte-api
