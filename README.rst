@@ -49,14 +49,19 @@ provided Scrapy add-on:
         "duplicate_url_discarder.Addon": 600,
     }
 
+If you are using other Scrapy add-ons that modify the request fingerprinter,
+such as the `scrapy-zyte-api`_ add-on, configure this add-on with a higher
+priority value so that the fallback fingerprinter is set to the correct value.
+
 With older Scrapy versions you need to enable the fingerprinter directly:
 
 .. code-block:: python
 
     REQUEST_FINGERPRINTER_CLASS = "duplicate_url_discarder.Fingerprinter"
 
-In this case you may also need to set the fallback fingerprinter explicitly,
-for example:
+If you were using a non-default request fingerprinter already, be it one you
+implemented or one from a Scrapy plugin like `scrapy-zyte-api`_, set it as
+fallback:
 
 .. code-block:: python
 
@@ -138,3 +143,5 @@ Configuration
     ]
 
 The default value of this setting is empty.
+
+.. _scrapy-zyte-api: https://github.com/scrapy-plugins/scrapy-zyte-api
