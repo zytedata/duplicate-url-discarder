@@ -74,3 +74,26 @@ def test_load_rules_null_args():
     assert load_rules(saved_rules) == [
         UrlRule(0, Patterns([]), "tolower", ()),
     ]
+
+
+def test_load_rules_extra_fields():
+    saved_rules = """[
+  {
+    "order": 200,
+    "extra_field": "foo",
+    "processor": "pathRemoval",
+    "urlPattern": {
+      "exclude": [
+        "foo.example/live"
+      ],
+      "include": [
+        "foo.example"
+      ]
+    }
+  }
+]"""
+    assert load_rules(saved_rules) == [
+        UrlRule(
+            200, Patterns(["foo.example"], ["foo.example/live"]), "pathRemoval", ()
+        ),
+    ]
