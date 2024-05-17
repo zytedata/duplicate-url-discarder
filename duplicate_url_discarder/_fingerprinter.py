@@ -52,6 +52,8 @@ class Fingerprinter:
             self.crawler.stats.inc_value("duplicate_url_discarder/request/skipped")
             return self._fallback_request_fingerprinter.fingerprint(request)
         canonical_url = self.url_canonicalizer.process_url(request.url)
+        if request.url != canonical_url:
+            self.crawler.stats.inc_value("duplicate_url_discarder/request/url_modified")
         self.crawler.stats.inc_value("duplicate_url_discarder/request/processed")
         return self._fallback_request_fingerprinter.fingerprint(
             request.replace(url=canonical_url)
