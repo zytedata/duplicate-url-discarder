@@ -7,7 +7,7 @@ class Addon:
         settings.set(
             "REQUEST_FINGERPRINTER_CLASS",
             "duplicate_url_discarder.Fingerprinter",
-            "addon",
+            settings.getpriority("REQUEST_FINGERPRINTER_CLASS"),
         )
         settings.set(
             "DUD_FALLBACK_REQUEST_FINGERPRINTER_CLASS",
