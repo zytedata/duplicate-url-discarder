@@ -52,28 +52,70 @@ def test_fingerprinter(tmp_path):
     assert df.request_seen(
         Request(url="http://foo.example/?PHPSESSIONID=11111&foo=baz")
     )
+    assert (
+        fingerprinter.crawler.stats.get_value(
+            "duplicate_url_discarder/request/url_modified"
+        )
+        == 1
+    )
     # a rule for a different domain isn't applied
     assert not df.request_seen(Request(url="http://foo.example/?bbn=11111&foo=baz"))
+    assert (
+        fingerprinter.crawler.stats.get_value(
+            "duplicate_url_discarder/request/url_modified"
+        )
+        == 1
+    )
 
     assert not df.request_seen(Request(url="http://bar.example/?foo=baz"))
     # a universal rule isn't applied
     assert not df.request_seen(
         Request(url="http://bar.example/?PHPSESSIONID=11111&foo=baz")
     )
+    assert (
+        fingerprinter.crawler.stats.get_value(
+            "duplicate_url_discarder/request/url_modified"
+        )
+        == 1
+    )
     # removing an argument (via a domain rule)
     assert df.request_seen(Request(url="http://bar.example/?bbn=11111&foo=baz"))
+    assert (
+        fingerprinter.crawler.stats.get_value(
+            "duplicate_url_discarder/request/url_modified"
+        )
+        == 2
+    )
 
     # skipping via dud=False, only if the exact URL wasn't seen before
     assert not df.request_seen(
         Request(url="http://bar.example/?bbn=11112&foo=baz", meta={"dud": False})
+    )
+    assert (
+        fingerprinter.crawler.stats.get_value(
+            "duplicate_url_discarder/request/url_modified"
+        )
+        == 2
     )
 
     # the method and body values are considered in the fingerprint
     assert not df.request_seen(
         Request(url="http://foo.example/?foo=bar", method="POST")
     )
+    assert (
+        fingerprinter.crawler.stats.get_value(
+            "duplicate_url_discarder/request/url_modified"
+        )
+        == 2
+    )
     assert not df.request_seen(
         Request(url="http://foo.example/?foo=bar", method="POST", body="body")
+    )
+    assert (
+        fingerprinter.crawler.stats.get_value(
+            "duplicate_url_discarder/request/url_modified"
+        )
+        == 2
     )
     assert df.request_seen(
         Request(
@@ -81,4 +123,10 @@ def test_fingerprinter(tmp_path):
             method="POST",
             body="body",
         )
+    )
+    assert (
+        fingerprinter.crawler.stats.get_value(
+            "duplicate_url_discarder/request/url_modified"
+        )
+        == 3
     )
