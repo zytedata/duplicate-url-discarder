@@ -88,6 +88,9 @@ The following URL processors are currently available:
   the keys are specified in the arguments. If a given key appears multiple times
   with different values in the URL, all of them are removed.
 
+* ``queryRemovalExcept``: like ``queryRemoval``, but the keys specified in the
+  arguments are kept while all others are removed.
+
 URL Rules
 =========
 

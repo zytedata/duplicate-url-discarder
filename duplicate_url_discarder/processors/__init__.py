@@ -3,9 +3,11 @@ from typing import Dict, Type
 from ..rule import UrlRule
 from .base import UrlProcessorBase
 from .query_removal import QueryRemovalProcessor
+from .query_removal_except import QueryRemovalExceptProcessor
 
 _PROCESSOR_CLASSES: Dict[str, Type[UrlProcessorBase]] = {
     "queryRemoval": QueryRemovalProcessor,
+    "queryRemovalExcept": QueryRemovalExceptProcessor,
 }
 
 
