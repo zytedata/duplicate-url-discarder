@@ -25,6 +25,7 @@ classifiers = [
 requires-python = ">=3.8"
 dependencies = [
     "Scrapy >= 2.7.0",
+    "treq >= 21.5.0",
     "url-matcher >= 0.5.0",
     "w3lib >= 1.22.0",
 ]
@@ -46,6 +47,7 @@ multi_line_output = 3
 [[tool.mypy.overrides]]
 module = [
     "scrapy.*",
+    "treq.*",
     "url_matcher.*",
 ]
 ignore_missing_imports = true

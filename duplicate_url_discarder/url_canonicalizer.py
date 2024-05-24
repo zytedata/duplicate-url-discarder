@@ -4,6 +4,8 @@ import os
 from pathlib import Path
 from typing import Dict, Iterable, Set, Union
 
+import treq
+from scrapy.utils.defer import maybe_deferred_to_future
 from url_matcher import URLMatcher
 
 from .processors import UrlProcessorBase, get_processor
@@ -13,11 +15,27 @@ logger = logging.getLogger(__name__)
 
 
 class UrlCanonicalizer:
-    def __init__(self, rule_paths: Iterable[Union[str, os.PathLike]]) -> None:
+    def __init__(self) -> None:
+        self.url_matcher = URLMatcher()
+        self.processors: Dict[int, UrlProcessorBase] = {}
+
+    @staticmethod
+    def _is_url(path: str) -> bool:
+        return path.startswith("http://") or path.startswith("https://")
+
+    async def load_rules(self, rule_paths: Iterable[Union[str, os.PathLike]]) -> None:
+        if self.processors:
+            raise RuntimeError("UrlCanonicalizer.load_rules() can only be called once.")
+
         rules: Set[UrlRule] = set()
         full_rule_count = 0
         for rule_path in rule_paths:
-            data = Path(rule_path).read_text()
+            data: str
+            if isinstance(rule_path, str) and self._is_url(rule_path):
+                response = await maybe_deferred_to_future(treq.get(rule_path))
+                data = await response.text()
+            else:
+                data = Path(rule_path).read_text()
             loaded_rules = load_rules(data)
             full_rule_count += len(loaded_rules)
             rules.update(loaded_rules)
@@ -26,8 +44,6 @@ class UrlCanonicalizer:
             f"Loaded {rule_count} rules, skipped {full_rule_count - rule_count} duplicates."
         )
 
-        self.url_matcher = URLMatcher()
-        self.processors: Dict[int, UrlProcessorBase] = {}
         rule_id = 0
         for rule in sorted(rules, key=operator.attrgetter("order")):
             processor = get_processor(rule)

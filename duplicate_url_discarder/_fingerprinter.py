@@ -4,7 +4,7 @@ import logging
 import os
 from typing import TYPE_CHECKING, List, Union
 
-from scrapy import Request
+from scrapy import Request, Spider, signals
 from scrapy.crawler import Crawler
 from scrapy.settings.default_settings import (
     REQUEST_FINGERPRINTER_CLASS as ScrapyRequestFingerprinter,
@@ -24,10 +24,10 @@ logger = logging.getLogger(__name__)
 class Fingerprinter:
     def __init__(self, crawler: Crawler):
         self.crawler: Crawler = crawler
-        rule_paths: List[Union[str, os.PathLike]] = self.crawler.settings.getlist(
+        self.rule_paths: List[Union[str, os.PathLike]] = self.crawler.settings.getlist(
             "DUD_LOAD_RULE_PATHS"
         )
-        if not rule_paths:
+        if not self.rule_paths:
             logger.warning("DUD_LOAD_RULE_PATHS is not set or is empty.")
         self._fallback_request_fingerprinter: RequestFingerprinterProtocol = (
             create_instance(
@@ -41,11 +41,16 @@ class Fingerprinter:
                 crawler=crawler,
             )
         )
-        self.url_canonicalizer = UrlCanonicalizer(rule_paths)
+        self.url_canonicalizer = UrlCanonicalizer()
 
     @classmethod
     def from_crawler(cls, crawler: Crawler) -> Self:
-        return cls(crawler)
+        o = cls(crawler)
+        crawler.signals.connect(o.spider_opened, signal=signals.spider_opened)
+        return o
+
+    async def spider_opened(self, spider: Spider) -> None:
+        await self.url_canonicalizer.load_rules(self.rule_paths)
 
     def fingerprint(self, request: Request) -> bytes:
         if not request.meta.get("dud", True):
