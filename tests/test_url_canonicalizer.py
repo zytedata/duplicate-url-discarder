@@ -8,11 +8,12 @@ from duplicate_url_discarder.url_canonicalizer import UrlCanonicalizer
 
 
 def test_url_canonicalizer_empty():
-    url_canonicalizer = UrlCanonicalizer([])
+    url_canonicalizer = UrlCanonicalizer()
     assert url_canonicalizer.process_url("http://foo.example") == "http://foo.example"
 
 
-def test_url_canonicalizer_load(tmp_path):
+@pytest.mark.asyncio
+async def test_url_canonicalizer_load(tmp_path):
     empty_path = Path(tmp_path) / "empty.json"
     empty_path.write_text("[]")
     rules_path = Path(tmp_path) / "rules.json"
@@ -34,7 +35,8 @@ def test_url_canonicalizer_load(tmp_path):
             ]
         )
     )
-    url_canonicalizer = UrlCanonicalizer([str(empty_path), rules_path])
+    url_canonicalizer = UrlCanonicalizer()
+    await url_canonicalizer.load_rules([str(empty_path), rules_path])
     assert len(url_canonicalizer.processors) == 2
     assert (
         url_canonicalizer.process_url("http://foo.example/?foo=1&bbn=1&PHPSESSIONID=1")
@@ -46,7 +48,8 @@ def test_url_canonicalizer_load(tmp_path):
     )
 
 
-def test_url_canonicalizer_unknown_processor(tmp_path):
+@pytest.mark.asyncio
+async def test_url_canonicalizer_unknown_processor(tmp_path):
     rules_path = Path(tmp_path) / "rules.json"
     rules_path.write_text(
         json.dumps(
@@ -67,7 +70,7 @@ def test_url_canonicalizer_unknown_processor(tmp_path):
         )
     )
     with pytest.raises(ValueError, match="No URL processor named unknown"):
-        UrlCanonicalizer([rules_path])
+        await UrlCanonicalizer().load_rules([rules_path])
 
 
 @pytest.mark.parametrize(
@@ -78,7 +81,10 @@ def test_url_canonicalizer_unknown_processor(tmp_path):
         (2, 1),
     ],
 )
-def test_url_canonicalizer_multiple_rules_same_processor(tmp_path, order1, order2):
+@pytest.mark.asyncio
+async def test_url_canonicalizer_multiple_rules_same_processor(
+    tmp_path, order1, order2
+):
     rules_path = Path(tmp_path) / "rules.json"
     rules_path.write_text(
         json.dumps(
@@ -98,7 +104,8 @@ def test_url_canonicalizer_multiple_rules_same_processor(tmp_path, order1, order
             ]
         )
     )
-    url_canonicalizer = UrlCanonicalizer([rules_path])
+    url_canonicalizer = UrlCanonicalizer()
+    await url_canonicalizer.load_rules([rules_path])
     assert len(url_canonicalizer.processors) == 2
     assert (
         url_canonicalizer.process_url("https://example.com?utm_source=cat&bbn=1&ref=g")
@@ -106,7 +113,8 @@ def test_url_canonicalizer_multiple_rules_same_processor(tmp_path, order1, order
     )
 
 
-def test_url_canonicalizer_duplicate_rules(tmp_path, caplog):
+@pytest.mark.asyncio
+async def test_url_canonicalizer_duplicate_rules(tmp_path, caplog):
     rules_path = Path(tmp_path) / "rules.json"
     rules_path.write_text(
         json.dumps(
@@ -138,7 +146,8 @@ def test_url_canonicalizer_duplicate_rules(tmp_path, caplog):
             ]
         )
     )
+    url_canonicalizer = UrlCanonicalizer()
     with caplog.at_level(logging.INFO):
-        url_canonicalizer = UrlCanonicalizer([rules_path])
+        await url_canonicalizer.load_rules([rules_path])
     assert len(url_canonicalizer.processors) == 3
     assert "Loaded 3 rules, skipped 1 duplicates." in caplog.text

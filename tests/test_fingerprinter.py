@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict
 
+import pytest
 from scrapy import Request, Spider
 from scrapy.dupefilters import BaseDupeFilter, RFPDupeFilter
 from scrapy.utils.test import get_crawler
@@ -9,9 +10,11 @@ from scrapy.utils.test import get_crawler
 from duplicate_url_discarder import Fingerprinter
 
 
-def get_fingerprinter(settings_dict: Dict[str, Any]) -> Fingerprinter:
+async def get_fingerprinter(settings_dict: Dict[str, Any]) -> Fingerprinter:
     crawler = get_crawler(Spider, settings_dict)
-    return Fingerprinter.from_crawler(crawler)
+    fp = Fingerprinter.from_crawler(crawler)
+    await fp.spider_opened(crawler.spider)
+    return fp
 
 
 def get_df(fingerprinter: Fingerprinter) -> BaseDupeFilter:
@@ -20,7 +23,8 @@ def get_df(fingerprinter: Fingerprinter) -> BaseDupeFilter:
     )
 
 
-def test_fingerprinter(tmp_path):
+@pytest.mark.asyncio
+async def test_fingerprinter(tmp_path):
     rules_path = Path(tmp_path) / "rules.json"
     rules_path.write_text(
         json.dumps(
@@ -40,7 +44,7 @@ def test_fingerprinter(tmp_path):
             ]
         )
     )
-    fingerprinter = get_fingerprinter({"DUD_LOAD_RULE_PATHS": [str(rules_path)]})
+    fingerprinter = await get_fingerprinter({"DUD_LOAD_RULE_PATHS": [str(rules_path)]})
     assert len(fingerprinter.url_canonicalizer.processors) == 2
 
     def get_stat(stat: str) -> Any:
