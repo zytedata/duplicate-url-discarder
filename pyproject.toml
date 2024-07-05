@@ -33,6 +33,9 @@ dynamic = ["version"]
 [project.urls]
 Source = "https://github.com/zytedata/duplicate-url-discarder"
 
+[project.optional-dependencies]
+rules = ["duplicate-url-discarder-rules"]
+
 [tool.setuptools.dynamic]
 version = {attr = "duplicate_url_discarder.__version__"}
 
