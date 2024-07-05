@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict
 
+import pytest
 from scrapy import Request, Spider
 from scrapy.dupefilters import BaseDupeFilter, RFPDupeFilter
 from scrapy.utils.test import get_crawler
@@ -95,3 +96,17 @@ def test_fingerprinter(tmp_path):
         )
     )
     assert get_stat("url_modified") == 3
+
+
+try:
+    from duplicate_url_discarder_rules import RULE_PATHS as default_rule_paths
+except ImportError:
+    default_rule_paths = None
+
+
+def test_default_rules():
+    fingerprinter = get_fingerprinter({})
+    if default_rule_paths:
+        assert len(fingerprinter.url_canonicalizer.processors) > 0
+    else:
+        assert len(fingerprinter.url_canonicalizer.processors) == 0

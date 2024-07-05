@@ -21,8 +21,9 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 try:
-    from duplicate_url_discarder_rules import RULE_PATHS as default_rule_paths
     from importlib.metadata import version
+
+    from duplicate_url_discarder_rules import RULE_PATHS as default_rule_paths
 except ImportError:
     default_rule_paths = None
 
@@ -38,9 +39,7 @@ class Fingerprinter:
             if default_rule_paths:
                 rule_paths = default_rule_paths
                 v = version("duplicate-url-discarder-rules")
-                msg += (
-                    f" Using RULE_PATHS from duplicate-url-discarder-rules=={v} instead."
-                )
+                msg += f" Using RULE_PATHS from duplicate-url-discarder-rules=={v} instead."
             logger.warning(msg)
 
         self._fallback_request_fingerprinter: RequestFingerprinterProtocol = (
