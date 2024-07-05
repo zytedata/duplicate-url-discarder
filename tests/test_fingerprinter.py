@@ -2,7 +2,6 @@ import json
 from pathlib import Path
 from typing import Any, Dict
 
-import pytest
 from scrapy import Request, Spider
 from scrapy.dupefilters import BaseDupeFilter, RFPDupeFilter
 from scrapy.utils.test import get_crawler

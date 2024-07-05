@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import TYPE_CHECKING, List, Union
+from typing import TYPE_CHECKING, Sequence, Union
 
 from scrapy import Request
 from scrapy.crawler import Crawler
@@ -31,7 +31,7 @@ except ImportError:
 class Fingerprinter:
     def __init__(self, crawler: Crawler):
         self.crawler: Crawler = crawler
-        rule_paths: List[Union[str, os.PathLike]] = self.crawler.settings.getlist(
+        rule_paths: Sequence[Union[str, os.PathLike]] = self.crawler.settings.getlist(
             "DUD_LOAD_RULE_PATHS"
         )
         if not rule_paths:
