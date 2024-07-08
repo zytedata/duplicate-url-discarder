@@ -35,6 +35,16 @@ Installation
 
     pip install duplicate-url-discarder
 
+Alternatively, you can also include in the installation the predefined rules in
+`duplicate-url-discarder-rules`_ via:
+
+.. code-block::
+
+    pip install duplicate-url-discarder[rules]
+
+If such rules are installed, they would automatically be used if the
+``DUD_LOAD_RULE_PATHS`` setting is left empty (see `configuration`_).
+
 Requires **Python 3.8+**.
 
 Using
@@ -131,6 +141,8 @@ All non-universal rules (ones that have non-empty include pattern) that match
 a request URL are applied according to their order field. If there are no
 non-universal rules that match the URL, the universal ones are applied.
 
+.. _configuration:
+
 Configuration
 =============
 
@@ -145,6 +157,9 @@ Configuration
         "/home/user/project/custom_rules1.json",
     ]
 
-The default value of this setting is empty.
+The default value of this setting is empty. However, if the package
+`duplicate-url-discarder-rules`_ is installed and ``DUD_LOAD_RULE_PATHS``
+has been left empty, the rules in the said package is automatically used.
 
 .. _scrapy-zyte-api: https://github.com/scrapy-plugins/scrapy-zyte-api
+.. _duplicate-url-discarder-rules: https://github.com/zytedata/duplicate-url-discarder-rules
