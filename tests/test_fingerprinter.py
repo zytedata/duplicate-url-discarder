@@ -103,9 +103,28 @@ except ImportError:
     default_rule_paths = None
 
 
-def test_default_rules():
+def test_default_rules(tmp_path):
     fingerprinter = get_fingerprinter({})
     if default_rule_paths:
         assert len(fingerprinter.url_canonicalizer.processors) > 0
     else:
         assert len(fingerprinter.url_canonicalizer.processors) == 0
+
+    # Regardless of the presence of the ``duplicate_url_discarder_rules`` package,
+    # as long as the ``DUD_LOAD_RULE_PATHS`` setting is set, rules on that will be used.
+
+    rules_path = Path(tmp_path) / "single_rule.json"
+    rules_path.write_text(
+        json.dumps(
+            [
+                {
+                    "args": ["PHPSESSIONID"],
+                    "order": 1,
+                    "processor": "queryRemoval",
+                    "urlPattern": {"include": []},
+                },
+            ]
+        )
+    )
+    fingerprinter = get_fingerprinter({"DUD_LOAD_RULE_PATHS": [str(rules_path)]})
+    assert len(fingerprinter.url_canonicalizer.processors) == 1
