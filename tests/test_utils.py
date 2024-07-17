@@ -37,7 +37,9 @@ def test_item_signature() -> None:
 
     assert item_signature(adapter, ["name"]) == hash(value)
 
-    with pytest.raises(
-        AttributeError, match="'FakeItem' object has no attribute 'get'"
-    ):
+    exception_text = (
+        "Got type <class 'tests.test_utils.test_item_signature.<locals>.FakeItem'> "
+        "but expected ItemAdapter."
+    )
+    with pytest.raises(ValueError, match=exception_text):
         item_signature(item, ["name"])  # type: ignore

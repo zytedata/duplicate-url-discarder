@@ -18,5 +18,8 @@ def load_keys_from_path(mapping: Dict[Any, T]) -> Dict[Any, T]:
 
 
 def item_signature(item: ItemAdapter, item_attributes: Iterable[str]) -> int:
-    values = [str(item.get(attrib)) for attrib in item_attributes]
+    try:
+        values = [str(item.get(attrib)) for attrib in item_attributes]
+    except AttributeError:
+        raise ValueError(f"Got type {type(item)} but expected ItemAdapter.")
     return hash("|".join(values))
