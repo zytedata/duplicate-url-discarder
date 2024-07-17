@@ -60,7 +60,7 @@ async def test_duplicate_url_discarder_pipeline_with_addon(caplog, httpserver) -
     crawler: Crawler = get_crawler(FakeSpider, settings)
     await crawler.crawl()
 
-    expected_text = "Enabled item pipelines:\n['duplicate_url_discarder.DuplicateUrlDiscarderPipeline']"
+    expected_text = "Enabled item pipelines:\n[<class 'duplicate_url_discarder.pipelines.DuplicateUrlDiscarderPipeline'>]"
     messages = [record.message for record in caplog.records]
     assert any(True for record in caplog.records if expected_text in messages)
 

@@ -7,6 +7,7 @@ from scrapy.utils.request import RequestFingerprinter
 from scrapy.utils.test import get_crawler
 
 from duplicate_url_discarder import Addon
+from duplicate_url_discarder.pipelines import DuplicateUrlDiscarderPipeline
 
 
 def test_addon():
@@ -24,9 +25,7 @@ def test_addon():
         crawler.settings["DUD_FALLBACK_REQUEST_FINGERPRINTER_CLASS"]
         == _SCRAPY_DEFAULT_REQUEST_FINGEPRINTER_CLASS
     )
-    assert crawler.settings["ITEM_PIPELINES"] == {
-        "duplicate_url_discarder.DuplicateUrlDiscarderPipeline": 100
-    }
+    assert crawler.settings["ITEM_PIPELINES"] == {DuplicateUrlDiscarderPipeline: 100}
 
 
 def test_addon_fallback():

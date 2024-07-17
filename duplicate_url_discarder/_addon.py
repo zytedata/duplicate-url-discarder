@@ -1,6 +1,8 @@
 from scrapy.settings import BaseSettings
 from scrapy.utils.misc import load_object
 
+from duplicate_url_discarder.pipelines import DuplicateUrlDiscarderPipeline
+
 
 def _setdefault(settings, setting, cls, pos) -> None:
     setting_value = settings[setting]
@@ -33,6 +35,6 @@ class Addon:
         _setdefault(
             settings,
             "ITEM_PIPELINES",
-            "duplicate_url_discarder.DuplicateUrlDiscarderPipeline",
+            DuplicateUrlDiscarderPipeline,
             100,
         )
