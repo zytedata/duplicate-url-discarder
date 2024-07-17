@@ -159,9 +159,9 @@ Configuration
 
   The default value of this setting is empty. However, if the package
   `duplicate-url-discarder-rules`_ is installed and ``DUD_LOAD_RULE_PATHS``
-  has been left empty, the rules in the said package is automatically used.
+  has been left empty, the rules in said package are automatically used.
 
-* ``DUD_ATTRIBUTES_PER_ITEM``: it's a mapping of either a type *(or its import path)*
+* ``DUD_ATTRIBUTES_PER_ITEM``: it's a mapping of a type *(or its import path)*
   into a list of attributes present in the instances of that type.
 
   For example:
