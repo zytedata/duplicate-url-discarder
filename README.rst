@@ -22,7 +22,7 @@ duplicate-url-discarder
    :target: https://duplicate-url-discarder.readthedocs.io/en/stable/?badge=stable
    :alt: Documentation Status
 
-``duplicate-url-discarder`` contains a Scrapy fingerprinter that uses
+**duplicate-url-discarder** contains a Scrapy fingerprinter that uses
 customizable URL processors to canonicalize URLs before fingerprinting.
 
 Quick Start
@@ -87,7 +87,7 @@ canonical form.
 URL Processors
 ==============
 
-``duplicate-url-discarder`` utilizes *URL processors* to make canonical
+**duplicate-url-discarder** utilizes *URL processors* to make canonical
 versions of URLs. The processors are configured with *URL rules*. Each URL rule
 specifies an URL pattern for which the processor applies, and specific
 processor arguments to use.
@@ -146,20 +146,49 @@ non-universal rules that match the URL, the universal ones are applied.
 Configuration
 =============
 
-``duplicate-url-discarder`` uses the following Scrapy settings:
+**duplicate-url-discarder** uses the following Scrapy settings:
 
-``DUD_LOAD_RULE_PATHS``: it should be a list of file paths (``str`` or
-``pathlib.Path``) pointing to JSON files with the URL rules to apply:
+* ``DUD_LOAD_RULE_PATHS``: it should be a list of file paths (``str`` or
+  ``pathlib.Path``) pointing to JSON files with the URL rules to apply:
 
-.. code-block:: python
+  .. code-block:: python
 
-    DUD_LOAD_RULE_PATHS = [
-        "/home/user/project/custom_rules1.json",
-    ]
+      DUD_LOAD_RULE_PATHS = [
+          "/home/user/project/custom_rules1.json",
+      ]
 
-The default value of this setting is empty. However, if the package
-`duplicate-url-discarder-rules`_ is installed and ``DUD_LOAD_RULE_PATHS``
-has been left empty, the rules in the said package is automatically used.
+  The default value of this setting is empty. However, if the package
+  `duplicate-url-discarder-rules`_ is installed and ``DUD_LOAD_RULE_PATHS``
+  has been left empty, the rules in the said package is automatically used.
+
+* ``DUD_ATTRIBUTES_PER_ITEM``: it's a mapping of either a type *(or its import path)*
+  into a list of attributes present in the instances of that type.
+
+  For example:
+
+  .. code-block:: python
+
+      DUD_ATTRIBUTES_PER_ITEM = {
+          "zyte_common_items.Product": [
+              "canonicalUrl",
+              "brand",
+              "name",
+              "gtin",
+              "mpn",
+              "productId",
+              "sku",
+              "color",
+              "size",
+              "style",
+          ],
+          # Other than strings representing import paths, types are supported as well.
+          dict: ["name"]
+      }
+
+  This allows DUD to select which attributes to use to derive a signature for an item.
+  This signature is then used to compare the identities of different items. For instance,
+  ``duplicate_url_discarder.DuplicateUrlDiscarderPipeline`` uses this to find duplicate
+  items that were extracted so it can drop them.
 
 .. _scrapy-zyte-api: https://github.com/scrapy-plugins/scrapy-zyte-api
 .. _duplicate-url-discarder-rules: https://github.com/zytedata/duplicate-url-discarder-rules
