@@ -7,15 +7,12 @@ from scrapy.utils.test import get_crawler
 
 
 @ensureDeferred
-async def test_duplicate_url_discarder_pipeline_no_addon(caplog, httpserver) -> None:
+async def test_duplicate_url_discarder_pipeline_no_addon(caplog) -> None:
     caplog.set_level("INFO")
-
-    httpserver.expect_request("")
-    start_url = httpserver.url_for("")
 
     class FakeSpider(Spider):
         name = "fake_spider"
-        start_urls = [start_url]
+        start_urls = ["data:,"]
 
     crawler: Crawler = get_crawler(FakeSpider, {})
     await crawler.crawl()
@@ -27,11 +24,8 @@ async def test_duplicate_url_discarder_pipeline_no_addon(caplog, httpserver) -> 
 
 
 @ensureDeferred
-async def test_duplicate_url_discarder_pipeline_with_addon(caplog, httpserver) -> None:
+async def test_duplicate_url_discarder_pipeline_with_addon(caplog) -> None:
     caplog.set_level("INFO")
-
-    httpserver.expect_request("/dummy").respond_with_data("Dummy")
-    start_url = httpserver.url_for("/dummy")
 
     @dataclass
     class FakeItem:
@@ -40,7 +34,7 @@ async def test_duplicate_url_discarder_pipeline_with_addon(caplog, httpserver) -
 
     class FakeSpider(Spider):
         name = "fake_spider"
-        start_urls = [start_url]
+        start_urls = ["data:,"]
 
         def parse(self, response):
             yield FakeItem(name="AAA", value=0)
