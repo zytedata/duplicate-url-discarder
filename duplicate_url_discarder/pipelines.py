@@ -1,4 +1,4 @@
-from typing import Any, Dict, Set, Tuple
+from typing import Any, Dict, Set, Tuple, TypeVar
 
 from itemadapter import ItemAdapter
 from scrapy import Spider
@@ -6,6 +6,8 @@ from scrapy.crawler import Crawler
 from scrapy.exceptions import DropItem, NotConfigured
 
 from .utils import item_signature, load_keys_from_path
+
+T = TypeVar("T")
 
 
 class DuplicateUrlDiscarderPipeline:
@@ -27,17 +29,12 @@ class DuplicateUrlDiscarderPipeline:
             )
         return cls(crawler)
 
-    def process_item(self, item: Any, spider: Spider) -> Any:
-        if not ItemAdapter.is_item(item):
-            return None
-
+    def process_item(self, item: T, spider: Spider) -> T:
         item_attributes = self._attributes_per_item.get(type(item))
         if not item_attributes:
             return item
 
-        adapter = ItemAdapter(item)
-        signature = item_signature(adapter, item_attributes)
-
+        signature = item_signature(ItemAdapter(item), item_attributes)
         if signature in self._seen_item_signatures:
             raise DropItem(f"Dropping item that was already seen before:\n{item}")
 

@@ -36,19 +36,20 @@ async def test_duplicate_url_discarder_pipeline_with_addon(caplog, httpserver) -
     @dataclass
     class FakeItem:
         name: str
+        value: int
 
     class FakeSpider(Spider):
         name = "fake_spider"
         start_urls = [start_url]
 
         def parse(self, response):
-            yield FakeItem(name="AAA")
-            yield FakeItem(name="BBB")
-            yield FakeItem(name="AAA")  # dropped
+            yield FakeItem(name="AAA", value=0)
+            yield FakeItem(name="BBB", value=1)
+            yield FakeItem(name="AAA", value=2)  # dropped
 
-            # These aren't declared in DUD_ATTRIBUTES_PER_ITEM so they aren't drpoped
-            yield {"name": "CCC"}
-            yield {"name": "CCC"}
+            # These aren't declared in DUD_ATTRIBUTES_PER_ITEM, so they aren't dropped
+            yield {"name": "CCC", "value": 3}
+            yield {"name": "CCC", "value": 4}
 
     settings = {
         "DUD_ATTRIBUTES_PER_ITEM": {FakeItem: ["name"]},
@@ -72,3 +73,4 @@ async def test_duplicate_url_discarder_pipeline_with_addon(caplog, httpserver) -
         if "Dropping item that was already seen before" in record.message
     ]
     assert len(dropped_messages) == 1
+    assert "FakeItem(name='AAA', value=2)" in dropped_messages[0]
