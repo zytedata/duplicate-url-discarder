@@ -35,7 +35,7 @@ def test_item_signature() -> None:
     item = FakeItem(value)
     adapter = ItemAdapter(item)
 
-    assert item_signature(adapter, ["name"]) == hash(value)
+    assert item_signature(adapter, ["name"]) == hash("name:fake_item")
 
     exception_text = (
         "Got type <class 'tests.test_utils.test_item_signature.<locals>.FakeItem'> "
