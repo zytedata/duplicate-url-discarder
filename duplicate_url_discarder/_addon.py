@@ -14,3 +14,6 @@ class Addon:
             current_fpr,
             "addon",
         )
+        settings["ITEM_PIPELINES"].setdefault(
+            "duplicate_url_discarder.DuplicateUrlDiscarderPipeline", 100
+        )
