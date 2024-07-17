@@ -1,4 +1,20 @@
 from scrapy.settings import BaseSettings
+from scrapy.utils.misc import load_object
+
+
+def _setdefault(settings, setting, cls, pos) -> None:
+    setting_value = settings[setting]
+    if not setting_value:
+        settings[setting] = {cls: pos}
+        return None
+    if cls in setting_value:
+        return None
+    for cls_or_path in setting_value:
+        if isinstance(cls_or_path, str):
+            _cls = load_object(cls_or_path)
+            if _cls == cls:
+                return None
+    settings[setting][cls] = pos
 
 
 class Addon:
@@ -14,6 +30,9 @@ class Addon:
             current_fpr,
             "addon",
         )
-        settings["ITEM_PIPELINES"].setdefault(
-            "duplicate_url_discarder.DuplicateUrlDiscarderPipeline", 100
+        _setdefault(
+            settings,
+            "ITEM_PIPELINES",
+            "duplicate_url_discarder.DuplicateUrlDiscarderPipeline",
+            100,
         )
