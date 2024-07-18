@@ -2,6 +2,7 @@ import pytest
 from url_matcher import Patterns
 
 from duplicate_url_discarder.processors import (
+    NormalizerProcessor,
     QueryRemovalExceptProcessor,
     QueryRemovalProcessor,
     get_processor,
@@ -95,3 +96,44 @@ def test_query_removal_except_validate_args():
         QueryRemovalExceptProcessor(("a", None, ""))
     QueryRemovalExceptProcessor(("",))
     QueryRemovalExceptProcessor(())
+
+
+@pytest.mark.parametrize(
+    ["input_url", "expected"],
+    (
+        ("https://example.com", "https://example.com"),
+        ("https://example.com?arg=1#frag", "https://example.com?arg=1#frag"),
+        ("https://www.example.com", "https://example.com"),
+        ("https://www.example.com?arg=1#frag", "https://example.com?arg=1#frag"),
+        ("https://www2.example.com", "https://example.com"),
+        ("https://www.us.example.com?arg=1#frag", "https://us.example.com?arg=1#frag"),
+        ("https://www2.uk.example.com", "https://uk.example.com"),
+    ),
+)
+def test_normalize_processor_www_prefixes(input_url, expected):
+    assert NormalizerProcessor(None).process(input_url) == expected
+
+
+@pytest.mark.parametrize(
+    ["input_url", "expected"],
+    (
+        ("https://example.com", "https://example.com"),
+        ("https://example.com/", "https://example.com"),
+        ("https://example.com//", "https://example.com"),
+        ("https://example.com?arg=1#frag", "https://example.com?arg=1#frag"),
+        ("https://example.com/?arg=1#frag", "https://example.com?arg=1#frag"),
+        ("https://example.com//?arg=1#frag", "https://example.com?arg=1#frag"),
+        ("https://us.example.com/?arg=1#frag", "https://us.example.com?arg=1#frag"),
+        ("https://us.example.com//?arg=1#frag", "https://us.example.com?arg=1#frag"),
+    ),
+)
+def test_normalize_processor_trailing_slashes(input_url, expected):
+    assert NormalizerProcessor(None).process(input_url) == expected
+
+
+def test_normalize_processor_validate_args():
+    with pytest.raises(TypeError, match="normalizeUrl doesn't accept args, got: "):
+        NormalizerProcessor(("",))
+
+    NormalizerProcessor(())
+    NormalizerProcessor(None)
