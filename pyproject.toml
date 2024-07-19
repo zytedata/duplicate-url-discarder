@@ -50,6 +50,7 @@ multi_line_output = 3
 module = [
     "scrapy.*",
     "url_matcher.*",
+    "pytest_twisted.*"
 ]
 ignore_missing_imports = true
 
