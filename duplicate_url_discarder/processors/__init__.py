@@ -5,11 +5,13 @@ from .base import UrlProcessorBase
 from .normalize import NormalizerProcessor
 from .query_removal import QueryRemovalProcessor
 from .query_removal_except import QueryRemovalExceptProcessor
+from .subpath_removal import SubpathRemovalProcessor
 
 _PROCESSOR_CLASSES: Dict[str, Type[UrlProcessorBase]] = {
+    "normalizer": NormalizerProcessor,
     "queryRemoval": QueryRemovalProcessor,
     "queryRemovalExcept": QueryRemovalExceptProcessor,
-    "normalizer": NormalizerProcessor,
+    "subpathRemoval": SubpathRemovalProcessor,
 }
 
 
