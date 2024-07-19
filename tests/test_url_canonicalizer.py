@@ -37,11 +37,17 @@ def test_url_canonicalizer_load(tmp_path):
                     "processor": "normalizer",
                     "urlPattern": {"include": ["bar.example"]},
                 },
+                {
+                    "args": [-1, 0, 2, 999],
+                    "order": 3,
+                    "processor": "subpathRemoval",
+                    "urlPattern": {"include": ["path.example"]},
+                },
             ]
         )
     )
     url_canonicalizer = UrlCanonicalizer([str(empty_path), rules_path])
-    assert len(url_canonicalizer.processors) == 3
+    assert len(url_canonicalizer.processors) == 4
     assert (
         url_canonicalizer.process_url(
             "http://www.foo.example/?foo=1&bbn=1&PHPSESSIONID=1"
@@ -53,6 +59,10 @@ def test_url_canonicalizer_load(tmp_path):
             "http://www2.bar.example/?foo=1&bbn=1&PHPSESSIONID=1"
         )
         == "http://bar.example?foo=1&PHPSESSIONID=1"
+    )
+    assert (
+        url_canonicalizer.process_url("http://www.path.example/a/b/c/d/e/f/?ref=1#frag")
+        == "http://www.path.example/b/d/e/f/?ref=1#frag"
     )
 
 

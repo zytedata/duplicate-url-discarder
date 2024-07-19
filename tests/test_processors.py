@@ -5,6 +5,7 @@ from duplicate_url_discarder.processors import (
     NormalizerProcessor,
     QueryRemovalExceptProcessor,
     QueryRemovalProcessor,
+    SubpathRemovalProcessor,
     get_processor,
 )
 from duplicate_url_discarder.rule import UrlRule
@@ -137,3 +138,63 @@ def test_normalize_processor_validate_args():
 
     NormalizerProcessor(())
     NormalizerProcessor(None)
+
+
+@pytest.mark.parametrize(
+    ["args", "input_url", "expected"],
+    (
+        ((), "https://example.com", "https://example.com"),
+        ((0,), "https://example.com", "https://example.com"),
+        ((1,), "https://example.com", "https://example.com"),
+        ((0,), "https://example.com/a/b/c/", "https://example.com/b/c/"),
+        ((2,), "https://example.com/a/b/c/", "https://example.com/a/b/"),
+        ((0, 1), "https://example.com/a/b/c/", "https://example.com/c/"),
+        ((0, 1, 2), "https://example.com/a/b/c/", "https://example.com/"),
+        ((0, 2), "https://example.com/a/b/c/", "https://example.com/b/"),
+        ((9999,), "https://example.com/a/b/c/", "https://example.com/a/b/c/"),
+        (
+            (0,),
+            "https://example.com/a/b/c/?ref=1#frag",
+            "https://example.com/b/c/?ref=1#frag",
+        ),
+    ),
+)
+def test_subpath_removal_processor(args, input_url, expected):
+    assert SubpathRemovalProcessor(args).process(input_url) == expected
+
+
+def test_subpath_removal_processor_validate_args():
+    SubpathRemovalProcessor(())
+    SubpathRemovalProcessor(None)
+    SubpathRemovalProcessor((1,))
+    SubpathRemovalProcessor((1, 2))
+
+    with pytest.raises(
+        ValueError,
+        match="subpathRemoval args must be an iterable of integers. Encountered <class 'str'>: 1",
+    ):
+        SubpathRemovalProcessor("1")  # type: ignore
+
+    with pytest.raises(
+        TypeError,
+        match="subpathRemoval args must be an iterable of integers. Got type: <class 'int'>: 1",
+    ):
+        SubpathRemovalProcessor(1)  # type: ignore
+
+    with pytest.raises(
+        TypeError,
+        match="subpathRemoval args must be an iterable of integers. Got type: <class 'float'>: 1.23.",
+    ):
+        SubpathRemovalProcessor(1.23)  # type: ignore
+
+    with pytest.raises(
+        ValueError,
+        match="subpathRemoval args must be an iterable of integers. Encountered <class 'str'>: i.",
+    ):
+        SubpathRemovalProcessor("invalid")  # type: ignore
+
+    with pytest.raises(
+        ValueError,
+        match="subpathRemoval args must be an iterable of integers. Encountered <class 'float'>: 1.23",
+    ):
+        SubpathRemovalProcessor((0, 1.23))
