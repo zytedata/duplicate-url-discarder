@@ -10,7 +10,7 @@ class SubpathRemovalProcessor(UrlProcessorBase):
     """Removes the i-th subpath (starts at 0) from the URL path if it exists.
 
     An example would be removing the 0-th and 2nd subpath of a URL like
-    https://example.com/a/b/c/d would result in https://example.com/b/c.
+    https://example.com/a/b/c/d would result in https://example.com/b/d.
     """
 
     def validate_args(self) -> None:
