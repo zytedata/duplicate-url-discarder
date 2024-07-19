@@ -11,9 +11,9 @@ class NormalizerProcessor(UrlProcessorBase):
             raise TypeError(f"normalizeUrl doesn't accept args, got: {self.args}")
 
     def process(self, input_url: str) -> str:
-        """Normalizees the input URL by removing the following:
+        """Normalizes the input URL by removing the following:
 
-        * 'www.*' prefixes
+        * 'www.' prefixes including ones with numerical characters, e.g. 'www2.'
         * trailing slashes
         """
 
