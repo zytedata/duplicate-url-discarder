@@ -28,10 +28,9 @@ class SubpathRemovalProcessor(UrlProcessorBase):
                 )
 
     def process(self, input_url: str) -> str:
-        positions = [int(pos) for pos in self.args]
         parsed_url = parse_url(input_url)
         subpaths = re.findall(r"/[^/]*", parsed_url.path)
         path = "".join(
-            subpath for i, subpath in enumerate(subpaths) if i not in positions
+            subpath for i, subpath in enumerate(subpaths) if i not in self.args
         )
         return parsed_url._replace(path=path).geturl()
