@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Any, Tuple
+from typing import Any, Optional, Tuple
 
 
 class UrlProcessorBase(ABC):
-    def __init__(self, args: Tuple[Any, ...]):
-        self.args: Tuple[Any, ...] = args
+    def __init__(self, args: Optional[Tuple[Any, ...]] = None):
+        self.args: Tuple[Any, ...] = args or ()
         self.validate_args()
 
     def validate_args(self) -> None:  # noqa: B027

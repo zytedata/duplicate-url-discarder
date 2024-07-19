@@ -31,18 +31,28 @@ def test_url_canonicalizer_load(tmp_path):
                     "processor": "queryRemoval",
                     "urlPattern": {"include": []},
                 },
+                {
+                    "args": [],
+                    "order": 2,
+                    "processor": "normalizer",
+                    "urlPattern": {"include": ["bar.example"]},
+                },
             ]
         )
     )
     url_canonicalizer = UrlCanonicalizer([str(empty_path), rules_path])
-    assert len(url_canonicalizer.processors) == 2
+    assert len(url_canonicalizer.processors) == 3
     assert (
-        url_canonicalizer.process_url("http://foo.example/?foo=1&bbn=1&PHPSESSIONID=1")
-        == "http://foo.example/?foo=1&bbn=1"
+        url_canonicalizer.process_url(
+            "http://www.foo.example/?foo=1&bbn=1&PHPSESSIONID=1"
+        )
+        == "http://www.foo.example/?foo=1&bbn=1"
     )
     assert (
-        url_canonicalizer.process_url("http://bar.example/?foo=1&bbn=1&PHPSESSIONID=1")
-        == "http://bar.example/?foo=1&PHPSESSIONID=1"
+        url_canonicalizer.process_url(
+            "http://www2.bar.example/?foo=1&bbn=1&PHPSESSIONID=1"
+        )
+        == "http://bar.example?foo=1&PHPSESSIONID=1"
     )
 
 
