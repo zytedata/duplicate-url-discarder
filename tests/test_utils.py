@@ -43,3 +43,18 @@ def test_item_signature() -> None:
     )
     with pytest.raises(ValueError, match=exception_text):
         item_signature(item, ["name"])  # type: ignore
+
+
+@pytest.mark.xfail(
+    reason="unsupported edge case due to setup of attribute name and values"
+)
+def test_item_signature_edge_case():
+    item_attributes = ["a", "b"]
+
+    adapter = ItemAdapter({"a": "a|b:b", "b": "b"})
+    sig_1 = item_signature(adapter, item_attributes)
+
+    adapter = ItemAdapter({"a": "a", "b": "b|b:b"})
+    sig_2 = item_signature(adapter, item_attributes)
+
+    assert sig_1 != sig_2
