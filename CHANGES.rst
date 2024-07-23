@@ -1,7 +1,7 @@
 Changes
 =======
 
-0.2.0 (YYYY-MM-DD)
+0.2.0 (2024-07-23)
 ------------------
 
 * New URL Processors:
