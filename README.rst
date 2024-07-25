@@ -101,6 +101,12 @@ The following URL processors are currently available:
 * ``queryRemovalExcept``: like ``queryRemoval``, but the keys specified in the
   arguments are kept while all others are removed.
 
+* ``subpathRemoval``: removes the subpaths of a URL based on its integer
+  positions.
+
+* ``normalizer``: removes trailing ``/`` and ``www.`` prefixes which also
+  includes numbers like ``www2.``.
+
 URL Rules
 =========
 
