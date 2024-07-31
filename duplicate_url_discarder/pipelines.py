@@ -36,7 +36,7 @@ class DuplicateUrlDiscarderPipeline:
 
         signature = item_signature(ItemAdapter(item), item_attributes)
         if signature in self._seen_item_signatures:
-            raise DropItem(f"Dropping item that was already seen before:\n{item}")
+            raise DropItem("Dropping item that was already seen before.")
 
         self._seen_item_signatures.add(signature)
         return item
