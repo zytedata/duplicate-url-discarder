@@ -167,6 +167,35 @@ Configuration
   `duplicate-url-discarder-rules`_ is installed and ``DUD_LOAD_RULE_PATHS``
   has been left empty, the rules in said package are automatically used.
 
+  As this setting requires a file path, it's not straightforward to deploy
+  custom rule files to Scrapy Cloud or other similar environments, one way for
+  that is this: put custom rule files into some location inside your Scrapy
+  project, list them in the `package data files`_, disable the `zip_safe`_ flag
+  and calculate the absolute file path(s) in the setting value. So a sample
+  ``setup.py`` would include:
+
+  .. code-block:: python
+
+      setup(
+          ...
+          zip_safe=False,
+          package_data={
+              "my_project": [
+                  "data/dud_rules.json",
+              ]
+          },
+      )
+
+  and ``settings.py`` can have code like this:
+
+  .. code-block:: python
+
+    DUD_LOAD_RULE_PATHS = [
+        os.path.join(
+            os.path.dirname(os.path.realpath(__file__)), "data", "dud_rules.json"
+        )
+    ]
+
 * ``DUD_ATTRIBUTES_PER_ITEM``: it's a mapping of a type *(or its import path)*
   into a list of attributes present in the instances of that type.
 
@@ -198,3 +227,5 @@ Configuration
 
 .. _scrapy-zyte-api: https://github.com/scrapy-plugins/scrapy-zyte-api
 .. _duplicate-url-discarder-rules: https://github.com/zytedata/duplicate-url-discarder-rules
+.. _package data files: https://setuptools.pypa.io/en/latest/userguide/datafiles.html
+.. _zip_safe: https://setuptools.pypa.io/en/latest/deprecated/zip_safe.html
