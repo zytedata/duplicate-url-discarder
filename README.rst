@@ -45,7 +45,7 @@ Alternatively, you can also include in the installation the predefined rules in
 If such rules are installed, they would automatically be used if the
 ``DUD_LOAD_RULE_PATHS`` setting is left empty (see `configuration`_).
 
-Requires **Python 3.8+**.
+Requires **Python 3.9+**.
 
 Using
 =====
