@@ -1,6 +1,21 @@
 Changes
 =======
 
+0.3.0 (YYYY-MM-DD)
+------------------
+
+* Added Python 3.13 support, dropped Python 3.8 support.
+
+* Improved Scrapy 2.12 support (deprecations).
+
+* Fixed the duplicate logging of dropped items.
+
+* Improved the docs:
+
+    * Documented how to deploy custom rule files.
+
+    * Documented missing processors.
+
 0.2.0 (2024-07-23)
 ------------------
 
