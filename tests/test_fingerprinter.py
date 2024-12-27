@@ -16,7 +16,7 @@ def get_fingerprinter(settings_dict: Dict[str, Any]) -> Fingerprinter:
 
 
 def get_df(fingerprinter: Fingerprinter) -> BaseDupeFilter:
-    fingerprinter.crawler.request_fingerprinter = fingerprinter
+    fingerprinter.crawler.request_fingerprinter = fingerprinter  # type: ignore[assignment]
     return build_from_crawler(RFPDupeFilter, fingerprinter.crawler)
 
 

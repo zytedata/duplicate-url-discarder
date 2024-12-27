@@ -17,7 +17,6 @@ try:
 except ImportError:  # Scrapy < 2.12
     from typing import Any, TypeVar
 
-    from scrapy.crawler import Crawler
     from scrapy.utils.misc import create_instance
 
     T = TypeVar("T")
@@ -26,6 +25,7 @@ except ImportError:  # Scrapy < 2.12
         objcls: type[T], crawler: Crawler, /, *args: Any, **kwargs: Any
     ) -> T:
         return create_instance(objcls, None, crawler, *args, **kwargs)
+
 
 from .url_canonicalizer import UrlCanonicalizer
 
@@ -75,6 +75,7 @@ class Fingerprinter:
         return cls(crawler)
 
     def fingerprint(self, request: Request) -> bytes:
+        assert self.crawler.stats is not None
         if not request.meta.get("dud", True):
             self.crawler.stats.inc_value("duplicate_url_discarder/request/skipped")
             return self._fallback_request_fingerprinter.fingerprint(request)
