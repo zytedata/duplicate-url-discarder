@@ -36,6 +36,11 @@ Source = "https://github.com/zytedata/duplicate-url-discarder"
 [project.optional-dependencies]
 rules = ["duplicate-url-discarder-rules"]
 
+[tool.pytest.ini_options]
+filterwarnings = [
+    'ignore::DeprecationWarning:scrapy',
+]
+
 [tool.setuptools.dynamic]
 version = {attr = "duplicate_url_discarder.__version__"}
 

@@ -58,6 +58,7 @@ async def test_duplicate_url_discarder_pipeline_with_addon(caplog) -> None:
     messages = [record.message for record in caplog.records]
     assert any(True for record in caplog.records if expected_text in messages)
 
+    assert crawler.stats is not None
     assert crawler.stats.get_value("item_scraped_count") == 4
     assert crawler.stats.get_value("item_dropped_count") == 1
 

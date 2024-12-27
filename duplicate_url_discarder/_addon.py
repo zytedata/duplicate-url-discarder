@@ -1,7 +1,9 @@
-from scrapy.settings import BaseSettings
+from scrapy.settings import SETTINGS_PRIORITIES, BaseSettings
 from scrapy.utils.misc import load_object
 
 from duplicate_url_discarder.pipelines import DuplicateUrlDiscarderPipeline
+
+ADDON_PRIORITY = SETTINGS_PRIORITIES.get("addon", 15)
 
 
 def _setdefault(settings, setting, cls, pos) -> None:
@@ -25,7 +27,7 @@ class Addon:
         settings.set(
             "REQUEST_FINGERPRINTER_CLASS",
             "duplicate_url_discarder.Fingerprinter",
-            settings.getpriority("REQUEST_FINGERPRINTER_CLASS"),
+            settings.getpriority("REQUEST_FINGERPRINTER_CLASS") or ADDON_PRIORITY,
         )
         settings.set(
             "DUD_FALLBACK_REQUEST_FINGERPRINTER_CLASS",
