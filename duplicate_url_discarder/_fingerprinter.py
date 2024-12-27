@@ -9,8 +9,23 @@ from scrapy.crawler import Crawler
 from scrapy.settings.default_settings import (
     REQUEST_FINGERPRINTER_CLASS as ScrapyRequestFingerprinter,
 )
-from scrapy.utils.misc import create_instance, load_object
+from scrapy.utils.misc import load_object
 from scrapy.utils.request import RequestFingerprinterProtocol
+
+try:
+    from scrapy.utils.misc import build_from_crawler
+except ImportError:  # Scrapy < 2.12
+    from typing import Any, TypeVar
+
+    from scrapy.crawler import Crawler
+    from scrapy.utils.misc import create_instance
+
+    T = TypeVar("T")
+
+    def build_from_crawler(
+        objcls: type[T], crawler: Crawler, /, *args: Any, **kwargs: Any
+    ) -> T:
+        return create_instance(objcls, None, crawler, *args, **kwargs)
 
 from .url_canonicalizer import UrlCanonicalizer
 
@@ -43,15 +58,14 @@ class Fingerprinter:
             logger.warning(msg)
 
         self._fallback_request_fingerprinter: RequestFingerprinterProtocol = (
-            create_instance(
+            build_from_crawler(
                 load_object(
                     crawler.settings.get(
                         "DUD_FALLBACK_REQUEST_FINGERPRINTER_CLASS",
                         ScrapyRequestFingerprinter,
                     )
                 ),
-                settings=crawler.settings,
-                crawler=crawler,
+                crawler,
             )
         )
         self.url_canonicalizer = UrlCanonicalizer(rule_paths)
