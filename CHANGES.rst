@@ -10,6 +10,8 @@ Changes
 
 * Fixed the duplicate logging of dropped items.
 
+* The message logged when using the default rules is no longer a warning.
+
 * Improved the docs:
 
     * Documented how to deploy custom rule files.
