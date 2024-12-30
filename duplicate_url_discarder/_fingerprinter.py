@@ -55,7 +55,9 @@ class Fingerprinter:
                 rule_paths = default_rule_paths
                 v = version("duplicate-url-discarder-rules")
                 msg += f" Using RULE_PATHS from duplicate-url-discarder-rules=={v} instead."
-            logger.warning(msg)
+                logger.info(msg)
+            else:
+                logger.warning(msg)
 
         self._fallback_request_fingerprinter: RequestFingerprinterProtocol = (
             build_from_crawler(
