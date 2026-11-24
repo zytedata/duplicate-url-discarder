@@ -1,4 +1,6 @@
-from typing import Any, Dict, Set, Tuple, TypeVar
+from __future__ import annotations
+
+from typing import Any, TypeVar
 
 from itemadapter import ItemAdapter
 from scrapy import Spider
@@ -14,12 +16,12 @@ class DuplicateUrlDiscarderPipeline:
     def __init__(self, crawler: Crawler):
         #: A mapping of item class to a list of attribute names which will be used to
         #: compute the item signature.
-        self._attributes_per_item: Dict[Any, Tuple[str, ...]] = load_keys_from_path(
+        self._attributes_per_item: dict[Any, tuple[str, ...]] = load_keys_from_path(
             crawler.settings.getdict("DUD_ATTRIBUTES_PER_ITEM", {})
         )
 
         #: Record of all the item signatures that were previously processed and seen.
-        self._seen_item_signatures: Set[int] = set()
+        self._seen_item_signatures: set[int] = set()
 
     @classmethod
     def from_crawler(cls, crawler: Crawler):

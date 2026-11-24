@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import logging
 import operator
 import os
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Dict, Iterable, Set, Union
 
 from url_matcher import URLMatcher
 
@@ -13,8 +15,8 @@ logger = logging.getLogger(__name__)
 
 
 class UrlCanonicalizer:
-    def __init__(self, rule_paths: Iterable[Union[str, os.PathLike]]) -> None:
-        rules: Set[UrlRule] = set()
+    def __init__(self, rule_paths: Iterable[str | os.PathLike]) -> None:
+        rules: set[UrlRule] = set()
         full_rule_count = 0
         for rule_path in rule_paths:
             data = Path(rule_path).read_text()
@@ -27,13 +29,11 @@ class UrlCanonicalizer:
         )
 
         self.url_matcher = URLMatcher()
-        self.processors: Dict[int, UrlProcessorBase] = {}
-        rule_id = 0
-        for rule in sorted(rules, key=operator.attrgetter("order")):
+        self.processors: dict[int, UrlProcessorBase] = {}
+        for rule_id, rule in enumerate(sorted(rules, key=operator.attrgetter("order"))):
             processor = get_processor(rule)
             self.processors[rule_id] = processor
             self.url_matcher.add_or_update(rule_id, rule.url_pattern)
-            rule_id += 1
 
     def process_url(self, url: str) -> str:
         use_universal = True

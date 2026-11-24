@@ -10,14 +10,14 @@ def _setdefault(settings, setting, cls, pos) -> None:
     setting_value = settings[setting]
     if not setting_value:
         settings[setting] = {cls: pos}
-        return None
+        return
     if cls in setting_value:
-        return None
+        return
     for cls_or_path in setting_value:
         if isinstance(cls_or_path, str):
             _cls = load_object(cls_or_path)
             if _cls == cls:
-                return None
+                return
     settings[setting][cls] = pos
 
 

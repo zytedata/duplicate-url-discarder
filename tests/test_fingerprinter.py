@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import json
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 from scrapy import Request, Spider
 from scrapy.dupefilters import BaseDupeFilter, RFPDupeFilter
@@ -10,7 +12,7 @@ from duplicate_url_discarder import Fingerprinter
 from duplicate_url_discarder._fingerprinter import build_from_crawler
 
 
-def get_fingerprinter(settings_dict: Dict[str, Any]) -> Fingerprinter:
+def get_fingerprinter(settings_dict: dict[str, Any]) -> Fingerprinter:
     crawler = get_crawler(Spider, settings_dict)
     return Fingerprinter.from_crawler(crawler)
 

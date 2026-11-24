@@ -1,3 +1,5 @@
+import re
+
 import pytest
 from url_matcher import Patterns
 
@@ -26,8 +28,8 @@ def test_get_processor():
 
 
 @pytest.mark.parametrize(
-    ["args", "url", "expected"],
-    [
+    ("args", "url", "expected"),
+    (
         ((), "http://foo.example?foo=1&bar", "http://foo.example?foo=1&bar"),
         (("a",), "http://foo.example?foo=1&bar", "http://foo.example?foo=1&bar"),
         (("foo",), "http://foo.example?foo=1&bar", "http://foo.example?bar"),
@@ -44,7 +46,7 @@ def test_get_processor():
         ),
         (("foo", "baz"), "http://foo.example?foo=1&bar", "http://foo.example?bar"),
         (("foo", "bar"), "http://foo.example?foo=1&bar", "http://foo.example"),
-    ],
+    ),
 )
 def test_query_removal(args, url, expected):
     processor = QueryRemovalProcessor(args)
@@ -61,8 +63,8 @@ def test_query_removal_validate_args():
 
 
 @pytest.mark.parametrize(
-    ["args", "url", "expected"],
-    [
+    ("args", "url", "expected"),
+    (
         ((), "http://foo.example?foo=1&bar", "http://foo.example"),
         (("a",), "http://foo.example?foo=1&bar", "http://foo.example"),
         (("foo",), "http://foo.example?foo=1&bar", "http://foo.example?foo=1"),
@@ -83,7 +85,7 @@ def test_query_removal_validate_args():
             "http://foo.example?foo=1&bar",
             "http://foo.example?foo=1&bar",
         ),
-    ],
+    ),
 )
 def test_query_removal_except(args, url, expected):
     processor = QueryRemovalExceptProcessor(args)
@@ -100,7 +102,7 @@ def test_query_removal_except_validate_args():
 
 
 @pytest.mark.parametrize(
-    ["input_url", "expected"],
+    ("input_url", "expected"),
     (
         ("https://example.com", "https://example.com"),
         ("https://example.com?arg=1#frag", "https://example.com?arg=1#frag"),
@@ -116,7 +118,7 @@ def test_normalize_processor_www_prefixes(input_url, expected):
 
 
 @pytest.mark.parametrize(
-    ["input_url", "expected"],
+    ("input_url", "expected"),
     (
         ("https://example.com", "https://example.com"),
         ("https://example.com/", "https://example.com"),
@@ -141,7 +143,7 @@ def test_normalize_processor_validate_args():
 
 
 @pytest.mark.parametrize(
-    ["args", "input_url", "expected"],
+    ("args", "input_url", "expected"),
     (
         ((), "https://example.com", "https://example.com"),
         ((0,), "https://example.com", "https://example.com"),
@@ -171,30 +173,40 @@ def test_subpath_removal_processor_validate_args():
 
     with pytest.raises(
         ValueError,
-        match="subpathRemoval args must be an iterable of integers. Encountered <class 'str'>: 1",
+        match=re.escape(
+            "subpathRemoval args must be an iterable of integers. Encountered <class 'str'>: 1"
+        ),
     ):
-        SubpathRemovalProcessor("1")  # type: ignore
+        SubpathRemovalProcessor("1")  # type: ignore[arg-type]
 
     with pytest.raises(
         TypeError,
-        match="subpathRemoval args must be an iterable of integers. Got type: <class 'int'>: 1",
+        match=re.escape(
+            "subpathRemoval args must be an iterable of integers. Got type: <class 'int'>: 1"
+        ),
     ):
-        SubpathRemovalProcessor(1)  # type: ignore
+        SubpathRemovalProcessor(1)  # type: ignore[arg-type]
 
     with pytest.raises(
         TypeError,
-        match="subpathRemoval args must be an iterable of integers. Got type: <class 'float'>: 1.23.",
+        match=re.escape(
+            "subpathRemoval args must be an iterable of integers. Got type: <class 'float'>: 1.23."
+        ),
     ):
-        SubpathRemovalProcessor(1.23)  # type: ignore
+        SubpathRemovalProcessor(1.23)  # type: ignore[arg-type]
 
     with pytest.raises(
         ValueError,
-        match="subpathRemoval args must be an iterable of integers. Encountered <class 'str'>: i.",
+        match=re.escape(
+            "subpathRemoval args must be an iterable of integers. Encountered <class 'str'>: i."
+        ),
     ):
-        SubpathRemovalProcessor("invalid")  # type: ignore
+        SubpathRemovalProcessor("invalid")  # type: ignore[arg-type]
 
     with pytest.raises(
         ValueError,
-        match="subpathRemoval args must be an iterable of integers. Encountered <class 'float'>: 1.23",
+        match=re.escape(
+            "subpathRemoval args must be an iterable of integers. Encountered <class 'float'>: 1.23"
+        ),
     ):
         SubpathRemovalProcessor((0, 1.23))

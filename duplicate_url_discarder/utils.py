@@ -1,4 +1,7 @@
-from typing import Any, Dict, Iterable, TypeVar
+from __future__ import annotations
+
+from collections.abc import Iterable
+from typing import Any, TypeVar
 
 from itemadapter import ItemAdapter
 from scrapy.utils.misc import load_object
@@ -6,7 +9,7 @@ from scrapy.utils.misc import load_object
 T = TypeVar("T")
 
 
-def load_keys_from_path(mapping: Dict[Any, T]) -> Dict[Any, T]:
+def load_keys_from_path(mapping: dict[Any, T]) -> dict[Any, T]:
     """Given a mapping, convert the keys that represent import paths
     into their respective objects.
     """
@@ -20,6 +23,6 @@ def load_keys_from_path(mapping: Dict[Any, T]) -> Dict[Any, T]:
 def item_signature(item: ItemAdapter, item_attributes: Iterable[str]) -> int:
     try:
         values = [f"{attrib}:{item.get(attrib)}" for attrib in item_attributes]
-    except AttributeError:
-        raise ValueError(f"Got type {type(item)} but expected ItemAdapter.")
+    except AttributeError as error:
+        raise ValueError(f"Got type {type(item)} but expected ItemAdapter.") from error
     return hash("|".join(values))

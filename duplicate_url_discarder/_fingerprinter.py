@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import TYPE_CHECKING, Sequence, Union
+from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
 from scrapy import Request
 from scrapy.crawler import Crawler
@@ -17,11 +18,11 @@ try:
 except ImportError:  # Scrapy < 2.12
     from typing import Any, TypeVar
 
-    from scrapy.utils.misc import create_instance
+    from scrapy.utils.misc import create_instance  # type: ignore[attr-defined]
 
     T = TypeVar("T")
 
-    def build_from_crawler(
+    def build_from_crawler(  # type: ignore[no-redef]
         objcls: type[T], crawler: Crawler, /, *args: Any, **kwargs: Any
     ) -> T:
         return create_instance(objcls, None, crawler, *args, **kwargs)
@@ -46,7 +47,7 @@ except ImportError:
 class Fingerprinter:
     def __init__(self, crawler: Crawler):
         self.crawler: Crawler = crawler
-        rule_paths: Sequence[Union[str, os.PathLike]] = self.crawler.settings.getlist(
+        rule_paths: Sequence[str | os.PathLike] = self.crawler.settings.getlist(
             "DUD_LOAD_RULE_PATHS"
         )
         if not rule_paths:
