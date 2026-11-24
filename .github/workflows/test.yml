@@ -12,7 +12,7 @@ on:
 jobs:
   test:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # ubuntu-latest has no Python 3.9 builds
     strategy:
       fail-fast: false
       matrix:
