@@ -91,12 +91,12 @@ def test_url_canonicalizer_unknown_processor(tmp_path):
 
 
 @pytest.mark.parametrize(
-    ["order1", "order2"],
-    [
+    ("order1", "order2"),
+    (
         (1, 1),
         (1, 2),
         (2, 1),
-    ],
+    ),
 )
 def test_url_canonicalizer_multiple_rules_same_processor(tmp_path, order1, order2):
     rules_path = Path(tmp_path) / "rules.json"

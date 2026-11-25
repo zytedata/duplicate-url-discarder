@@ -42,7 +42,7 @@ def test_item_signature() -> None:
         "but expected ItemAdapter."
     )
     with pytest.raises(ValueError, match=exception_text):
-        item_signature(item, ["name"])  # type: ignore
+        item_signature(item, ["name"])  # type: ignore[arg-type]
 
 
 @pytest.mark.xfail(
