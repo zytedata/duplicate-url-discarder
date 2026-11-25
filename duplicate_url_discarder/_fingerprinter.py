@@ -31,8 +31,7 @@ except ImportError:  # Scrapy < 2.12
 from .url_canonicalizer import UrlCanonicalizer
 
 if TYPE_CHECKING:
-    # typing.Self requires Python 3.11
-    from typing_extensions import Self
+    from typing import Self
 
 logger = logging.getLogger(__name__)
 

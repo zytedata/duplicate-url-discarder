@@ -7,8 +7,7 @@ from typing import TYPE_CHECKING, Any
 from url_matcher import Patterns
 
 if TYPE_CHECKING:
-    # typing.Self requires Python 3.11
-    from typing_extensions import Self
+    from typing import Self
 
 
 @dataclass(frozen=True)
